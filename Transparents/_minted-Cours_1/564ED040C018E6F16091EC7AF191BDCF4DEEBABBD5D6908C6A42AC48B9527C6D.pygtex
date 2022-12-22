@@ -1,0 +1,20 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{MPI\PYGZus{}Comm\PYGZus{}rank}\PYG{p}{(}\PYG{n}{comm}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{myRank}\PYG{+w}{ }\PYG{p}{)}\PYG{+w}{ }\PYG{p}{;}
+\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{myRank}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{+w}{ }\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Ssend}\PYG{p}{(}\PYG{+w}{ }\PYG{n}{sendbuf1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{count}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}INT}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{tag}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{comm}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Recv}\PYG{p}{(}\PYG{+w}{ }\PYG{n}{recvbuf1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{count}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}INT}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{tag}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{comm}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{status}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{+w}{ }\PYG{n}{myRank}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Ssend}\PYG{p}{(}\PYG{+w}{ }\PYG{n}{sendbuf2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{count}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}INT}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{tag}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{comm}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{+w}{ }\PYG{n}{myRank}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{+w}{ }\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Recv}\PYG{p}{(}\PYG{+w}{ }\PYG{n}{recvbuf1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{count}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}INT}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}ANY\PYGZus{}SOURCE}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{tag}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{comm}\PYG{p}{,}
+\PYG{+w}{             }\PYG{o}{\PYGZam{}}\PYG{n}{status}\PYG{+w}{ }\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Ssend}\PYG{p}{(}\PYG{+w}{ }\PYG{n}{sendbuf2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{count}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}INT}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{tag}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{comm}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Recv}\PYG{p}{(}\PYG{+w}{ }\PYG{n}{recvbuf2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{count}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}INT}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}ANY\PYGZus{}SOURCE}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{tag}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{comm}\PYG{p}{,}
+\PYG{+w}{             }\PYG{o}{\PYGZam{}}\PYG{n}{status}\PYG{+w}{ }\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

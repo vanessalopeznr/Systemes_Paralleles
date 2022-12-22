@@ -1,0 +1,10 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{rank}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{vecteur}\PYG{p}{[}\PYG{l+m+mi}{5}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{l+m+mf}{1.}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{3.}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{5.}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{7.}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{22.}\PYG{+w}{ }\PYG{p}{\PYGZcb{};}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Send}\PYG{p}{(}\PYG{n}{vecteurs}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}DOUBLE}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{101}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{commGlob}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{rank}\PYG{o}{==}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Status}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{;}\PYG{+w}{    }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{vecteurs}\PYG{p}{[}\PYG{l+m+mi}{5}\PYG{p}{];}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Recv}\PYG{p}{(}\PYG{n}{vecteurs}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}DOUBLE}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{101}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{commGlob}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{status}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

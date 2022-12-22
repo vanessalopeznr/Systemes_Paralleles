@@ -1,0 +1,15 @@
+\frametitle{Bhudda's set algorithm}
+\begin{exampleblock}{Algorithm}
+        \begin{itemize}
+            \item Draw $N$ random values of $c$ in the disk $\mathcal{D}$ where the relative series diverge;
+            \item Compute the orbit of this serie until divergence and increment the intensity of the pixel
+                  representing each value of the orbit;
+        \end{itemize}
+    \end{exampleblock}
+
+    \begin{alertblock}{Parallelization of the algorithm}
+        \begin{itemize}
+            \item Master-slave algorithm to ensure load balancing;
+            \item For granularity, one define a task as a pack of random values $c$;
+        \end{itemize}
+    \end{alertblock}

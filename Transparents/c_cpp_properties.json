@@ -1,0 +1,19 @@
+{
+    "env": {
+      "myDefaultIncludePath": ["${workspaceFolder}", "${workspaceFolder}/examples/**"]
+    },
+    "configurations": [
+      {
+        "name": "Windows",
+        "intelliSenseMode": "clang-x64",
+        "includePath": ["${myDefaultIncludePath}", "c:\\msys64/mingw64/include/"],
+        "cppStandard": "c++17",
+        "browse": {
+          "path": ["${workspaceFolder}"],
+          "limitSymbolsToIncludedHeaders": true,
+          "databaseFilename": ""
+        }
+      }
+    ],
+    "version": 4
+  }

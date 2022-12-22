@@ -1,0 +1,15 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{MPI\PYGZus{}Request}\PYG{+w}{ }\PYG{n}{req}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}Status}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{;}
+\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{rank}\PYG{o}{==}\PYG{l+m+mi}{0}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Irecv}\PYG{p}{(}\PYG{n}{rcvbuf}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{count}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}DOUBLE}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{101}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{commGlob}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{req}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Send}\PYG{p}{(}\PYG{n}{sndbuf}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{count}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}DOUBLE}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{102}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{commGlob}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Wait}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{req}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{status}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{rank}\PYG{o}{==}\PYG{l+m+mi}{1}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Irecv}\PYG{p}{(}\PYG{n}{rcvbuf}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{count}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}DOUBLE}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{102}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{commGlob}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{req}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Send}\PYG{p}{(}\PYG{n}{sndbuf}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{count}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}DOUBLE}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{101}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{commGlob}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Wait}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{req}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{status}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

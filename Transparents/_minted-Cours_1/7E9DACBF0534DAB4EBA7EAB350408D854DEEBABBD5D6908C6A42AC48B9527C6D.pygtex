@@ -1,0 +1,20 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{MPI\PYGZus{}Request}\PYG{+w}{ }\PYG{n}{req}\PYG{p}{;}
+\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{rank}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{vecteur}\PYG{p}{[}\PYG{l+m+mi}{5}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{l+m+mf}{1.}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{3.}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{5.}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{7.}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{22.}\PYG{+w}{ }\PYG{p}{\PYGZcb{};}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Isend}\PYG{p}{(}\PYG{n}{vecteurs}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}DOUBLE}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{101}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{commGlob}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{req}\PYG{p}{);}
+\PYG{+w}{    }\PYG{c+c1}{// Some compute with other data can be executed here!}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Wait}\PYG{p}{(}\PYG{n}{req}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}STATUS\PYGZus{}IGNORE}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{rank}\PYG{o}{==}\PYG{l+m+mi}{1}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Status}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{;}\PYG{+w}{    }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{vecteurs}\PYG{p}{[}\PYG{l+m+mi}{5}\PYG{p}{];}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Irecv}\PYG{p}{(}\PYG{n}{vecteurs}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MPI\PYGZus{}DOUBLE}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{101}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{commGlob}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{req}\PYG{p}{);}
+\PYG{+w}{    }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{flag}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{do}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{c+c1}{// Do computation while message is not received on another data}
+\PYG{+w}{        }\PYG{n}{MPI\PYGZus{}Test}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{req}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{flag}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{status}\PYG{p}{);}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k}{while}\PYG{p}{(}\PYG{n}{flag}\PYG{+w}{ }\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

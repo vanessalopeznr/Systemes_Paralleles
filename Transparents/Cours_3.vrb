@@ -1,0 +1,47 @@
+\frametitle{Shear sort algorithm for parallel distributed memory architecture}
+\scriptsize
+    \begin{center}\textcolor{blue}{\small Implementation ideas}\end{center}
+
+    \begin{itemize}
+        \item Same principal as odd-even algorithm : replace a value with some sets of values $S_{i}$ (one set per process);
+        \item Define a relation order : $S_{i} < S_{j}$ iff $\max({S_{i}}) < \min({S_{j}})$ (In set, values ordered as increasing order)
+        \item Use odd-even algorithm to parallelize the phase of sorting per row or column;
+        \item Grouping processes in new communicators per rows and per columns;
+        \item Play with rank numbering to alternate between increasing order and decreasing order for rows;
+    \end{itemize}
+
+    \begin{block}{\small Processes repartition}
+    \begin{multicols}{2}
+    \begin{minipage}{0.5\textwidth}
+        \begin{figure}
+            \begin{tikzpicture}
+\draw[fill=cyan] (0.9, 0) ellipse  (1.5 and 0.25);
+\draw[fill=cyan] (0.9, -0.6) ellipse  (1.5 and 0.25);
+\draw[fill=cyan] (0.9, -1.2) ellipse  (1.5 and 0.25);
+\draw[fill=cyan] (0.9, -1.8) ellipse  (1.5 and 0.25);
+\draw[fill=green,opacity=0.5] (0, -0.9) ellipse  (0.25 and 1.5);
+\draw[fill=green,opacity=0.5] (0.6, -0.9) ellipse  (0.25 and 1.5);
+\draw[fill=green,opacity=0.5] (1.2, -0.9) ellipse  (0.25 and 1.5);
+\draw[fill=green,opacity=0.5] (1.8, -0.9) ellipse  (0.25 and 1.5);
+\foreach \x/\y/\r in {0/0/0, 0/1/1, 0/2/2, 0/3/3, 1/0/7, 1/1/6, 1/2/5, 1/3/4, 2/0/8, 2/1/9, 2/2/10, 2/3/11, 3/0/15, 3/1/14, 3/2/13, 3/3/12}
+{
+    \node[draw, circle, inner sep=1pt] (P\r) at (0.6*\y,-0.6*\x) {\tiny $P_{\r}$};
+}
+\foreach \x [evaluate=\x as \y using {int(\x-1)}] in {1,...,15} {
+    \draw[red, ->, thick] (P\y) -- (P\x);
+}
+\node[fill=cyan, ellipse] at (4.4, -0.6) {\tiny Row communicators};
+\node[fill=green!50, ellipse] at (4.4, -1.2) {\tiny Column communicators};
+            \end{tikzpicture}
+        \end{figure}
+    \end{minipage}
+
+    \begin{minipage}{0.5\textwidth}
+        \begin{itemize}
+            \item Use \verb@MPI_Comm_split(comm,color,key,&newcomm)@ to define row and columns communicators;
+            \item Processes calling this function with same color are inside the same new communicator;
+            \item key is a value to numbering the processes inside the new communicator.
+        \end{itemize}
+    \end{minipage}
+\end{multicols}
+    \end{block}

@@ -1,0 +1,14 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}mpi.h\PYGZgt{}}
+\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n+nf}{main}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{nargs}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{char}\PYG{+w}{ }\PYG{k}{const}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{argv}\PYG{p}{[])}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Comm}\PYG{+w}{ }\PYG{n}{commGlob}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{nbp}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{rank}\PYG{p}{;}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Init}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{nargs}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{argv}\PYG{p}{);}\PYG{c+c1}{// Initialization of the context}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Comm\PYGZus{}dup}\PYG{p}{(}\PYG{n}{MPI\PYGZus{}COMM\PYGZus{}WORLD}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{commGlob}\PYG{p}{);}\PYG{c+c1}{// Copy global communicator in own communicator;}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Comm\PYGZus{}size}\PYG{p}{(}\PYG{n}{commGlob}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{nbp}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Comm\PYGZus{}rank}\PYG{p}{(}\PYG{n}{commGlob}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{rank}\PYG{p}{);}
+\PYG{+w}{    }\PYG{p}{...}
+\PYG{+w}{    }\PYG{n}{MPI\PYGZus{}Finalize}\PYG{p}{();}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

@@ -1,0 +1,574 @@
+\documentclass[compress,10pt,aspectratio=169]{beamer}
+\usetheme[customnumbering]{onera}
+
+\usepackage{amsmath,amsfonts,graphicx}
+\usepackage{pifont}
+\usepackage{etoolbox}
+\usepackage{multicol}
+\usepackage{anyfontsize}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{colortbl}
+%\setlength{\columnseprule}{1pt}
+%\def\columnseprulecolor{\color{blue}}
+\usepackage{minted} % syntax coloring. 
+\setminted{encoding=utf-8, autogobble}
+\usemintedstyle{xcode}
+\AtBeginEnvironment{minted}{\fontsize{8}{8}\selectfont}
+
+%\usepackage{dsfont}
+\usepackage{ifdraft}
+\ifdraft{
+  \usepackage{fancyvrb}
+  \DefineVerbatimEnvironment{cppcode}{Verbatim}{}
+}{
+\newminted{cpp}{}
+}
+\usepackage{hyperref}
+\usetikzlibrary{shadows, arrows, decorations.pathmorphing, fadings, shapes.arrows, positioning, calc, shapes, fit, matrix,math}
+
+\definecolor{lightblue}{RGB}{0,200,255} 
+\definecolor{paper}{RGB}{255,247,197}
+\definecolor{ocre}{RGB}{243,102,25} % Define the orange color used for highlighting throughout the book
+\definecolor{BurntOrange}{RGB}{238,154,0}
+\definecolor{darkorange}{RGB}{119, 77, 0}
+\definecolor{OliveGreen}{RGB}{188,238,104}
+\definecolor{DarkGreen}{RGB}{0,128,0}
+\definecolor{BrickRed}{RGB}{238,44,44}
+\definecolor{Tan}{RGB}{210,180,140}
+\definecolor{Aquamarine}{RGB}{127,255,212}
+\definecolor{NavyBlue}{RGB}{0,64,128}
+\definecolor{DarkYellow}{RGB}{192,192,0}
+\definecolor{Yellow}{RGB}{255,255,0}
+
+\title[Parallel programming\hspace{2em}]{Parallel performance measure and embarrassingly Parallel algorithms}
+\subtitle{Performance measure and load balancing}
+\author[X. JUVIGNY]{Xavier JUVIGNY, SN2A, DAAA, ONERA\\ \href{mailto:xavier.juvigny@onera.fr}{\texttt{xavier.juvigny@onera.fr}} }
+\date[01/08/2023]{Course Parallel Programming\\- January 8th 2023 -}
+\institute{\inst{1}ONERA,\inst{2}DAAA}
+
+\AtBeginSection[]{
+  \begin{frame}{Overview}
+  \begin{multicols}{2}
+  \small \tableofcontents[currentsection, hideallsubsections]
+  \end{multicols}
+  \end{frame} 
+}
+
+\begin{document}
+
+\MakeTitlePage
+
+\begin{frame}
+\frametitle{Table of contents}
+\begin{multicols}{2}
+\tableofcontents[hideallsubsections]
+\end{multicols}
+\end{frame}
+
+\section{Performance tools}
+
+\begin{frame}{Speed-up}
+    \scriptsize
+    \begin{block}{Definition}
+        Let's
+        \begin{itemize}
+        \item $t_{s}$ : Sequential execution time
+        \item $t_{p}(n)$ : Execution time on $n$ computing units;
+        \end{itemize}
+
+        Speed-up is defined as :        
+        \begin{equation}
+         S(n) = \frac{t_{s}}{t_{p}(n)}
+        \end{equation}
+    \end{block}
+        
+    \begin{alertblock}{Remark}
+        The sequential algorithm is often different as parallel algorithm. In this case,
+        speed-up measure is not obvious. In particular, following questions must be 
+        asked among other questions :
+        \begin{itemize}
+            \item Is the sequential algorithm optimal in complexity ?
+            \item Is the sequential algorithm well optimized ?
+            \item Is the sequential algorithm exploiting at best the cache memory ?
+        \end{itemize} 
+    \end{alertblock}
+        
+\end{frame}
+
+\begin{frame}[fragile]{Amdahl's law}
+\scriptsize
+\begin{center}\textcolor{DarkGreen}{\large Give a limit for the speed-up}\end{center}
+
+\begin{itemize}
+\item Let's $t_{s}$ the time running the code in sequential
+\item Let's $f$ the part (in percent) of $t_{s}$, relative to a part of the code which \textcolor{orange}{can't be parallelized} 
+\end{itemize}
+
+So
+\[
+    S(n) = \frac{t_{s}}{f.t_{s}+\frac{(1-f)t_{s}}{n}} = \frac{n}{1+(n-1)f} \xrightarrow[n \to \infty]{} \frac{1}{f}
+\]
+
+This law is useful to find the maximal number of computing core to use for an application.
+
+\begin{alertblock}{Limitation of the law}
+    $f$ may change with the volume of input data and bigger input data improve the speed-up.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Gustafson's law}
+\scriptsize
+\begin{center}{\large \textcolor{orange}{Speed-up behaviour with constant volume input data per process}}\end{center}
+
+\begin{itemize}
+\item \textbf{Hypotheses} : 
+\begin{itemize}
+    \item {\scriptsize $t_{s}\geq 0$ the time to execute the sequential part of the code is indenpendant of the volume of input data;}
+    \item {\scriptsize $t_{p} > 0$ the time to execute the parallel part of the code is linear relative of the volume of input data.}
+    \item {\scriptsize Let's consider $t_{s}+t_{p} = 1$ (one unit of time)}.
+\end{itemize}
+\item Let's $t_{s}$ the time token by the execution of the sequential part of the code;
+\item Let's $t_{p}$ the time token by the execution of the parallel part of the code for a fixed amount of data.
+\end{itemize}
+
+\[
+    S(n) = \frac{t_{s}+n.t_{p}}{t_{s}+t_{p}} = n + \frac{(1-n)t_{s}}{t_{s}+t_{p}}
+                                             = n + (1-n).t_{s}
+\]
+\end{frame}
+
+\begin{frame}[fragile]{Scalability}
+    \begin{block}{Definition}
+        For a parallel program, the behavious of the speed-up when we raises up the number of processes or/and the amount 
+        of input data. 
+    \end{block}
+
+    \begin{exampleblock}{How evaluate the scalability ?}
+        \begin{itemize}
+            \item Evaluate the worst speed-up : \textcolor{red}{For a global fixed amount of data}, draw the speed-up curve in function of the number of processes;
+            \item Evaluate the best speed-up : \textcolor{DarkGreen}{For a fixed amount of data per process}, draw the speed-up curve in function of the number of processes;
+            \item In concrete use of the program, the speed-up may be between the worst and best scenario.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Granularity}
+    \scriptsize
+    \begin{center}\small Ratio between computing intensity and quantity of data exchanged between processes\end{center}
+
+    \begin{itemize}
+        \item Sending and receiving data is prohibitive :
+        \begin{itemize}
+            \item {\scriptsize \textcolor{red}{Initial cost of a message} : each message has an initial cost : set the connection, 
+                   get the same protocol, and so.\textcolor{blue}{This cost is constant.}} 
+            \item {\scriptsize \textcolor{blue}{Cost of the data transfer} : At last, the cost of the data flow is linear with the number
+            of data to exchange}
+            \item {\scriptsize These costs are greater the cost of memory operations in RAM}
+            \item \textcolor{DarkGreen}{\scriptsize Better to copy some sparse data in a buffer and send the buffer than send data with multiple send and receives}
+        \end{itemize}
+        \item \textcolor{darkorange}{Try to minimize the number of data exchange between processes}
+        \item Greater is the ratio between number of computation instructions and messages to exchange, better will be your speed-up !
+        \item \alert{Granularity can be improved with non blocking data exchanges}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Load balancing}
+    \scriptsize
+    \begin{block}{Definition}
+        \textbf{All processes execute a computation section of the code in the same time};
+    \end{block}
+
+    \begin{itemize}
+        \item Great penalities in time occure if some parts of the code are far away from load balancing;
+        \item \textbf{Example 1} : A function in the code take $t$ seconds for the half of the processes, and $\frac{t}{2}$
+              for other processes. The maximal speed-up for this function will be :
+            \[
+                S(n) = \frac{\frac{n}{2}t + \frac{n}{2}\frac{t}{2}}{t} = \frac{3n}{4}
+            \]
+        \item \textbf{Example 2} : A function in the code takes $\frac{t}{2}$ seconds for $n-1$ processes, and $t$
+            for one process. The maximal speed-up for this function will be :
+          \[
+              S(n) = \frac{(n-1)\frac{t}{2} + t}{t} = \frac{n-1}{2} + 1 = \frac{n+1}{2}
+          \]
+  \end{itemize}
+
+  \textbf{Remark} : Greater is the time token to execute a  bad load balancing function, greater is the penality. Don't worry
+  about load balancing for functions taking very small time to execute
+\end{frame}
+
+\section{Embarrassingly parallel algorithms}
+\subsection{Definition and properties}
+\begin{frame}[fragile]{Definition}
+    \scriptsize
+    \begin{block}{Embarrassingly parallel algorithm}
+        \begin{itemize}
+            \item Each data used and computed are independant;
+            \item No data race in multithread context;
+            \item No communication between processes in distributed environment
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{Property}
+        \begin{itemize}
+            \item In distributed parallel context, no data must be exchanged between processes to compute the results;
+            \item In shared parallel environment, parallelization is straightforward, but beware to the memory bound computation;
+            \item In distributed environment, the memory bound limitation is not a trouble;
+            \item If data are contiguous and algorithm vectorizable, can be ideal on GPGPU for performance.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{First example : Vector addition}
+    \scriptsize
+    \begin{center}\small Add two real vectors of dimensions $N$ \end{center}
+
+    \[
+        w = u + v;\; u,v,w\in\mathbb{R}^{3}
+    \]
+
+    \begin{block}{Ideas}
+    \begin{itemize}
+        \item For load balancing, scatter the vectors in equal parts among the threads or processes 
+        \item Each process/thread computes a part of the vector addition
+        \item \alert{In distributed memory, the result is scattered among processes !}
+    \end{itemize}
+    \end{block}
+
+    \begin{block}{Some properties}
+    \begin{itemize}
+        \item Memory access and computing operation have the same complexity : 
+              \textbf{On shared memory, memory bound limits the performance}
+        \item On distributed memory, each process uses his own physical memory and none data must be 
+              exchanged : Speed-up may be linear relative to the number of processes (if data
+              intensity is enough)
+    \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Example : Block diagonal matrices multiplication $C = A.B$ (1)}
+    \scriptsize
+    Matrix-matrix multiplication $C = A.B$ where
+        \[
+            A = \left(
+                \begin{array}{cccc}
+                    A_{11} & 0 & \ldots & 0 \\
+                      0    & A_{22} & \ddots & 0 \\
+                      \vdots & \ddots & \ddots & \vdots \\
+                      0 & \ldots & 0 & A_{nn} 
+                \end{array}\right),
+            B = \left(
+                \begin{array}{cccc}
+                    B_{11} & 0 & \ldots & 0 \\
+                      0    & B_{22} & \ddots & 0 \\
+                      \vdots & \ddots & \ddots & \vdots \\
+                      0 & \ldots & 0 & B_{nn} 
+                \end{array}\right).
+        \]
+    where $d_{i} = \mbox{dim}(A_{ii}) = \mbox{dim}(B_{ii})$ ($n$ independant matrix-matrix multiplications)
+
+    \begin{block}{\small Problematic}
+        Close to the vector addition multiplication, but :
+        \begin{itemize}
+            \item Dimensions of diagonal blocks are inhomogeneous \& for each diagonal 
+                  block, computation complexity : $d_{i}^{3}$.
+            \item How distribute diagonal blocks among processes to obtain nearly optimal load balancing ?
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Example : Block diagonal matrices multiplication $C = A.B$ (2)}
+    \scriptsize
+    \begin{center}\small algorithm to distribute diagonal blocks among processes\end{center}
+
+    \begin{block}{Example of algorithm to distribute the diagonal blocks}
+    \begin{itemize}
+        \item Sort diagonal blocks with dimension decreasing;
+        \item Set "weight" to zero for each process
+        \item Distribute biggest triplet blocks $A_{ii},B_{ii},C_{ii}$ among processes and add each $d_{i}$ in the weight of each process;
+        \item While some diagonal blocks are not distributed :
+        \begin{itemize}
+            \item {\scriptsize Add the biggest block which is not distributed to the process having the smallest weight }
+            \item {\scriptsize Add the relative $d_{i}$ at the weight of the process}
+        \end{itemize}
+    \end{itemize}
+    \end{block}
+
+    \textbf{Remark} : All processes compute the distribution of the diagonal blocks. It's better to do same computation for all processes
+                      than one computes and sends result to other processes.
+
+\end{frame}
+
+\begin{frame}[fragile]{Third example : Syracuse series (1)}
+\scriptsize 
+\begin{block}{\small Definition of syracuse serie}
+    \[
+        \left\{
+        \begin{array}{l}
+            u_{0} \mbox{ choosen} \\
+            u_{n+1} = \left\{
+                \begin{array}{l}
+                    \frac{u_{n}}{2} \mbox{ if } u_{n}\mbox{ is even}\\[1mm]
+                    3.u_{n}+1 \mbox{ if } u_{n} \mbox{ is odd.}
+                \end{array}
+            \right.
+        \end{array}
+        \right.
+    \]
+\end{block}
+
+\begin{exampleblock}{\small Property of syracuse serie}
+    \begin{itemize}
+        \item One cycle exists : $1 \rightarrow 4 \rightarrow 2 \rightarrow 1 \rightarrow \cdots$
+        \item A conjecture : \alert{$\forall u_{0}\in \mathbb{N}$, 
+              the serie reaches the cycle above in a finite number of iterations}
+    \end{itemize}
+\end{exampleblock}
+
+\begin{alertblock}{\small Some definition}
+    \begin{itemize}
+        \item \textcolor{blue}{\bf Length of flight} : number of iterations for a serie to reach the value 1;
+        \item \textcolor{NavyBlue}{\bf Height of the flight} : maximal value reached by a serie
+    \end{itemize}
+\end{alertblock}
+\begin{center}{\bf The goal of the program : } compute the length and the height of flight for lot of 
+    odd values for $u_{0}$
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Third example : Syracuse series (2)}
+    \scriptsize
+    \begin{block}{\small Problematic}
+        \begin{itemize}
+            \item Each process computes the length and the height for a subset of initial values $u_{0}$;
+            \item The computation intensity depends of the length of each syracuse serie;
+            \item It's impossible to know a priori the computation complexity to compute the height and the length of a serie
+            \item Use a dynamic algorithm on "root" process (the "master" process) to distribute serie among other processes ("slaves")
+        \end{itemize}
+    \end{block}
+
+    \begin{multicols}{2}
+        \begin{exampleblock}{\small Master's Algorithm}
+            \begin{itemize}
+                \item Send a small pack of series to each slave processes;
+                \item While(some pack of series to send) do 
+                \item \hspace*{2mm}Wait slave asking series and send next pack;
+                \item end While
+                \item Send terminaison id to all slave processes;
+            \end{itemize}
+        \end{exampleblock}
+    
+
+        \begin{exampleblock}{\small Slave's Algorithm}
+            \begin{itemize}
+                \item While (receive some series to compute in a pack)
+                \item \hspace*{2mm}Compute each serie of the pack;
+                \item end While
+            \end{itemize}
+        \end{exampleblock}
+    \end{multicols}
+
+    \textbf{Remark} : A task is composed of a pack of series to have a good granularity.
+
+\end{frame}
+
+\section{Nearly embarrasingly parallel algorithm}
+
+\begin{frame}[fragile]{Nearly embarrasingly parallel algorithm}
+    \scriptsize
+    \begin{block}{\small Definition}
+        Independant computation for each processes with a final communication to finalize the computation.
+    \end{block}
+
+    \begin{exampleblock}{\small Examples}
+        \begin{itemize}
+            \item Dot product of two vector in $\mathbb{R}^{n}$;
+            \item Compute an integral;
+            \item Matrix-vector product;
+        \end{itemize}
+    \end{exampleblock}
+
+    \begin{alertblock}{\small Non embarrasingly parallel algorithm examples}
+      \begin{itemize}
+      \item Parallel sort algorithms;
+      \item Matrix-matrix product;
+      \item Algorithms based on domain decomposition methods;
+      \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Integral computation}
+  \scriptsize
+  \begin{block}{\small Integral computation}
+    \begin{itemize}
+    \item Integral computation based on Gauss quadrature formulae :
+      \[
+      \int_{a}^{b}f(x)dx \approx \sum_{i=1}^{Ng} \omega_{i}f(g_{i})
+      \]
+      where $\omega_{i}\in\mathbb{R}$ the weights  and $g_{i}\in\mathbb{R}$ integrals points.
+    \item In fact, Gauss quadrature are given on $[-1;1]$ interval : some variable modification to do in the integral !;
+    \item $\left\{ g_{1}=0, \omega_{1}=2 \right\}$ : Order 1 Legendre Gauss quadrature;
+    \item $\left\{ \left( g_{1}=-\frac{\sqrt{2}}{2}, \omega_{1}=\frac{5}{9} \right), \left( g_{2}=0, \omega_{2}=\frac{8}{9} \right), \left( g_{3}=+\frac{\sqrt{2}}{2}, \omega_{3}=\frac{5}{9} \right) \right\}$ : Order 3 Legendre Gauss quadrature
+    \item \textbf{Remark} : Order $n$ means than quadrature compute the exact value of the integral for polynoms of degree lesser or equal to $n$.
+    \item To compute better approximation of the integral, we subdivide the interval in several smaller intervals
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Parallel integral computation}
+  \scriptsize
+  \begin{center}
+    \[
+    I = \int_{a}^{b}f(x)dx = \sum_{i=1}^{N}\int_{a_{i}}^{b_{i}}f(x)dx = \sum_{i=1}^{N} I_{î} \mbox{ where } a_{1}=a, b_{N} = b\mbox{ and } a_{i} < b_{i} < a_{i+1}
+    \]
+  \end{center}
+  \begin{block}{\small Main ideas}
+    \begin{itemize}
+  \item Scatter sub-intervals among the processes $P$ to compute partial sums :
+    \[
+    S_{p} = \sum_{[a_{i};b_{i}] \in P} \int_{a_{i}}^{b_{i}} f(x)dx
+    \]
+  \item Use reduce to compute the integral value (global sum) :
+    \[ S = \sum_{p=1}^{nbp} S_{p} \]
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Matrix-vector product}
+  \scriptsize
+  Let's a matrix $A\in\mathbb{R}^{m\times n}$ and a vector $u\in\mathbb{R}^{m}$.
+
+  The goal of this algorithm is to compute the matrix-vector product :
+  \[
+  v = A.u\in\mathbb{R}^{n}\mbox{ where } v_{i} = \sum_{j=1}^{m} A_{ij}.u_{j}
+  \]
+  
+  Two possibilities to parallize this algorithm :
+  \begin{itemize}
+  \item Partitionning the matrix per block of rows :
+  \item Partitionning the matrix per block of columns and the vector $u$ per block of same size.
+  \end{itemize}
+
+  The goal is to split the computation between processes and use a global communication operation
+  to get the final result.
+
+\end{frame}
+
+\begin{frame}[fragile]{Matrix-vector product per rows splitting}
+  \scriptsize
+  Let's
+  \[
+  A = \left(\begin{array}{c}
+    A_{1} \\ \hline
+    A_{2} \\ \hline
+    \vdots \\ \hline
+    A_{I} \\ \hline
+    \vdots \\ \hline
+    A_{N}
+    \end{array}
+  \right)
+  \mbox{ where } \forall I\in\left\{1,2,\ldots,N\right\}, A_{I}\in\mathbb{R}^{\frac{n}{N}\times m}.
+    \]
+
+    \begin{exampleblock}{Algorithm}
+      \begin{itemize}
+      \item Each process computes a part of $v$. The process $I$ computes 
+        $\displaystyle
+        V_{I} = A_{I}.u \in \mathbb{R}^{\frac{n}{N}}
+        $ 
+      \item To compute another matrix-vector product with the new vector, we need to gather the vector
+            in all processes (only necessary for distributed parallel algorithm).
+      \end{itemize}
+    \end{exampleblock}
+  
+\end{frame}
+
+\begin{frame}[fragile]{Matrix-vector product per columns splitting}
+  \scriptsize
+  Let's
+  \[
+    A = \left(A_{1}|A_{2}|\ldots|A_{I}|\ldots|A_{N}\right)\mbox{ and }
+    u=\left(\begin{array}{c}
+      U_{1} \\ \hline
+      U_{2} \\ \hline
+      \vdots \\ \hline
+      U_{I} \\ \hline
+      \vdots \\ \hline
+      U_{N}
+    \end{array} \right)
+    \mbox{ where } \forall I\in\left\{1,2,\ldots,N\right\}, A_{I}\in\mathbb{R}^{n\times \frac{m}{N}}\mbox{ and } U_{I}\in\mathbb{R}^{\frac{m}{N}}
+    \]
+
+    \begin{exampleblock}{Algorithm}
+      \begin{itemize}
+      \item Each process computes a partial sum for $v$. Processus $I$ computes
+        \[
+        V_{I} = A_{I}.U_{I}\in\mathbb{R}^{n}
+        \]
+      \item Finnaly, a sum reduction is done to get the final result :
+        $\displaystyle
+        v = \sum_{I=1}^{N}V_{I}
+        $
+      \end{itemize}
+    \end{exampleblock}
+    
+\end{frame}
+
+\begin{frame}[fragile]{Bhudda set}
+  \scriptsize
+  \begin{multicols}{2}
+  Let's consider the complex recursive mandelbrot serie :
+  \[
+  \left\{
+  \begin{array}{l}
+  z_{0}=0,\\
+  z_{n+1} = z_{n}^{2} +c \mbox{ where } c\in\mathbb{C} \mbox{ chosen.}
+  \end{array}\right.
+  \]
+
+  \begin{figure}[h]
+    \includegraphics[width=0.3\linewidth]{../Images/mandelbrot.jpeg}
+    \includegraphics[width=0.2\linewidth]{../Images/bhudda.jpg}
+    \caption{\small Mandelbrot (left) and Bhudda's (right) set}
+  \end{figure}
+  \end{multicols}
+
+  \begin{multicols}{2}
+  \begin{block}{\small Property}
+  \begin{itemize}
+  \item Serie divergent if $\exists n>0; |z_{n}|>2$;
+  \item Region of interest : the disk $\mathcal{D}$ of radius 2;
+  \item In some region of the disk, possible to prove the convergence;
+  \item But chaotic convergence behaviour in some region of $\mathcal{D}$ !
+  \end{itemize}
+  \end{block}
+
+  \begin{exampleblock}{\small Mandelbrot and bhudda sets}
+    \begin{itemize}
+    \item \textcolor{blue}{Mandelbrot's set} : \\ color $c$ with  "divergence speed" of relative series
+    \item \textcolor{DarkGreen}{Bhudda's set} : \\ Color  orbit of divergent series
+    \end{itemize}
+  \end{exampleblock}
+  \end{multicols}
+\end{frame}
+
+\begin{frame}[fragile]{Bhudda's set algorithm}
+    \begin{exampleblock}{Algorithm}
+        \begin{itemize}
+            \item Draw $N$ random values of $c$ in the disk $\mathcal{D}$ where the relative series diverge;
+            \item Compute the orbit of this serie until divergence and increment the intensity of the pixel
+                  representing each value of the orbit;            
+        \end{itemize}
+    \end{exampleblock}
+
+    \begin{alertblock}{Parallelization of the algorithm}
+        \begin{itemize}
+            \item Master-slave algorithm to ensure load balancing;
+            \item For granularity, one define a task as a pack of random values $c$;
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+
+\end{document}
