@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <chrono>
+#include <vector>
 
 std::vector<std::int32_t>
 generateValues(std::int32_t nbValues)

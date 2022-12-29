@@ -5,14 +5,14 @@ include Make_msys2.inc
 CXXVERS = -std=c++17 -fPIC
 CXXFLAGS17 = -std=c++17 -fPIC
 ifdef DEBUG
-CFLAGS      = -g -O0 -Wall -fbounds-check  -fsanitize=thread -pedantic -fPIC
-CXXFLAGS    = ${CFLAGS} -std=c++17 -D_GLIBCXX_DEBUG $(INCPATH)
+CFLAGS      = -g -O0 -Wall -fbounds-check   -pedantic -fPIC # -fsanitize=thread
+CXXFLAGS    = ${CFLAGS} -std=c++17 -D_GLIBCXX_DEBUG -DDEBUG $(INCPATH)
 else
 CFLAGS      = -O3 -march=native -fPIC
 CXXFLAGS    = ${CFLAGS} -std=c++17 $(INCPATH)
 endif
 
-ALL= rankSort.exe oddEvenParallelBlock.exe shearSort.exe
+ALL= rankSort.exe oddEvenParallelBlock.exe shearSort.exe hyperquicksort.exe bitonicsort_distributed.exe
 
 default:	help
 
@@ -29,6 +29,12 @@ oddEvenParallelBlock.exe : oddEvenParallelBlock.cpp
 
 shearSort.exe : shearSort.cpp
 	$(MPICXX) $(CXXFLAGS) -o $@ $^ $(OMP) $(LIBMPI)
+
+hyperquicksort.exe : hyperquicksort.cpp 
+	$(MPICXX) $(CXXFLAGS) -o $@ $^ $(LIBMPI)
+
+bitonicsort_distributed.exe : bitonicsort_distributed.cpp
+	$(MPICXX) $(CXXFLAGS) -o $@ $^ $(LIBMPI)
 
 help:
 	@echo "Available targets : "
