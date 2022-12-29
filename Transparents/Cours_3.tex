@@ -43,6 +43,23 @@
 \definecolor{NavyBlue}{RGB}{0,64,128}
 \definecolor{DarkYellow}{RGB}{192,192,0}
 \definecolor{Yellow}{RGB}{255,255,0}
+\definecolor{navyblue}{rgb}{0.1,0.2,0.7}
+
+\tikzset{square matrix/.style={
+    matrix of nodes,
+    column sep=-\pgflinewidth, row sep=-\pgflinewidth,
+    nodes={draw,
+      minimum height=#1,
+      anchor=center,
+      text width=#1,
+      align=center,
+      inner sep=0pt
+    },
+  },
+  square matrix/.default=1.2cm
+}
+
+\setbeamercovered{transparent}
 
 \title[Parallel programming\hspace{2em}]{Parallel sorting algorithms}
 \subtitle{Theory and implementation}
@@ -696,4 +713,506 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
     \end{block}
 \end{frame}
 
+\section{Quicksort algorithm}
+
+\begin{frame}[fragile]{Sequential quick-sort algorithm}
+    \scriptsize
+    \begin{block}{\small Reminder}
+        \begin{itemize}
+            \item Optimal sequential sorting algorithm ($\mathcal{O}(n\log_{2}(n))$) based on divide-and-conquer algorithm class;
+            \item Select a number $r$ called \alert{pivot} and split the list into two sublists : one with all elements at most equal
+                  to $r$, the other holding all elements greater than $r$;
+            \item This procedure is recursive, applied till one element lists are obtained (which are sorted)
+            \item \textcolor{DarkGreen}{\bf \underline{Example }: }
+            \only<1> {
+            \begin{center}
+                \begin{tabular}{cccccccc}
+                    4 & 2 & 7 & 8 & 5 & 1 & 3 & 6 \\
+                \end{tabular}
+            \end{center}
+            }
+            \only<2> { 
+            \begin{center}
+                \begin{tabular}{cccccccc}
+                    4 & 2 & 7 & 8 & 5 & 1 & 3 & \textcolor{red}{6} \\
+                \end{tabular}
+            \end{center}
+            }
+            \only<3> { 
+            \begin{center}
+                \begin{tabular}{cccccccc}
+                    4 & 2 & 5 & 1 & 3 & \textcolor{blue}{6} & 7 & 8 \\
+                \end{tabular}
+            \end{center}
+            }
+            \only<4> { 
+            \begin{center}
+                \begin{tabular}{cccccccc}
+                    4 & 2 & 5 & 1 & \textcolor{red}{3} & \textcolor{blue}{6} & 7 & \textcolor{red}{8} \\
+                \end{tabular}
+            \end{center}
+            }
+            \only<5> { 
+            \begin{center}
+                \begin{tabular}{cccccccc}
+                    2 & 1 & \textcolor{blue}{3} & 4 & 5 & \textcolor{blue}{6} & 7 & \textcolor{blue}{8} \\
+                \end{tabular}
+            \end{center}
+            }
+            \only<6> { 
+            \begin{center}
+                \begin{tabular}{cccccccc}
+                    2 & \textcolor{red}{1} & \textcolor{blue}{3} & 4 & \textcolor{red}{5} & \textcolor{blue}{6} & 7 & \textcolor{blue}{8} \\
+                \end{tabular}
+            \end{center}
+            }
+            \only<7> { 
+            \begin{center}
+                \begin{tabular}{cccccccc}
+                    \textcolor{blue}{1} & 2 & \textcolor{blue}{3} & 4 & \textcolor{blue}{5} & \textcolor{blue}{6} & 7 & \textcolor{blue}{8} \\
+                \end{tabular}
+            \end{center}
+            }
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{\small Sequential code}
+        \begin{minted}{C++}
+            void quicksort( T* list, T* start, T* end ) {
+                auto pivot = choosePivot(start,end);
+                if (start < end) {
+                    split(list, start, end, pivot);
+                    quicksort(list, start, pivot-1);
+                    quicksort(list,pivot+1, end   );
+                }
+            }
+        \end{minted}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Naive parallelization of quicksort algorithm}
+    \scriptsize
+    \begin{block}{Ideas}
+        \begin{itemize}
+            \item The class of quick-sort algortihm suggests to apply a divide-and-conquer parallelization method;
+            \item The main problem of this approach is that the tree distribution ( induced by the lengths of the sublists)
+                  heavily depends on pivot selection; in the worst case, the tree may consists of a single path (as a list);
+            \item \textcolor{blue}{\bf Analysis} : provided an equal distribution of values within sublists is assured, one gets :
+            \begin{itemize}
+                \item {\scriptsize Comparaisons : $\displaystyle n + \frac{n}{2} + \frac{n}{4} + \cdots \approx 2n$}
+                \item {\scriptsize Communications : $t_{s} + \frac{n}{2}t_{d} + t_{s} + \frac{n}{4}t_{d} + \cdots \approx \log_{2}(n)t_{s} + nt_{d}$ where $t_{s}$ is time to start a communication
+                      and $t_{d}$ the time to transfert one element to another process.}
+            \end{itemize}
+            \item But only last iteration uses full parallelization !
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Hyperquick sort algorithm}
+    \begin{center}\textcolor{blue}{\small Binary numbering of Hypercube}\end{center}
+
+\only<1> {
+\begin{figure}[h]
+\begin{tikzpicture}[scale=1.4]
+\ttfamily{}
+% Cube dimension 0
+\draw (-4,0) node[fill=green,inner sep=1pt]{\scriptsize 0};
+\end{tikzpicture}
+\caption{Dimension 0}
+\end{figure}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\only<2> {
+\begin{figure}[h]
+\begin{tikzpicture}[scale=1.4]
+\ttfamily{}
+% Cube dimension 1
+\draw (-3,0) node[fill=green,inner sep=1pt](cd1_0){\scriptsize 0} -- (-2,0) node[fill=cyan,inner sep=1pt](cd1_1){\scriptsize 1};
+\end{tikzpicture}
+\caption{Dimension 1}
+\end{figure}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\only<3> {
+\begin{figure}[h]
+\begin{tikzpicture}[scale=1.4]
+\ttfamily{}
+% Cube dimension 2
+\draw (-1,0) node[fill=green,inner sep=1pt](cd2_0){\scriptsize 00} -- (0,0) node[fill=green,inner sep=1pt](cd2_1){\scriptsize 01};
+\draw (-1,1) node[fill=cyan,inner sep=1pt](cd2_2){\scriptsize 10} -- (0,1) node[fill=cyan,inner sep=1pt](cd2_3){\scriptsize 11};
+\draw[color=blue] (cd2_0) -- (cd2_2) (cd2_1) -- (cd2_3);
+\end{tikzpicture}
+\caption{Dimension 2}
+\end{figure}
+}    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\only<4> {
+\begin{figure}[h]
+\begin{tikzpicture}[scale=1.6]
+\ttfamily{}
+% Cube dimension 3
+\draw (1,0) node[fill=green,inner sep=1pt](cd3_0){\scriptsize 000} -- (2,0) node[fill=green,inner sep=1pt](cd3_1){\scriptsize 001};
+\draw (1,1) node[fill=green,inner sep=1pt](cd3_2){\scriptsize 010} -- (2,1) node[fill=green,inner sep=1pt](cd3_3){\scriptsize 011};
+\draw (1.5,0.5) node[fill=cyan,inner sep=1pt](cd3_4){\scriptsize 100} -- (2.5,0.5) node[fill=cyan,inner sep=1pt](cd3_5){\scriptsize 101};
+\draw (1.5,1.5) node[fill=cyan,inner sep=1pt](cd3_6){\scriptsize 110} -- (2.5,1.5) node[fill=cyan,inner sep=1pt](cd3_7){\scriptsize 111};
+\draw[color=red] (cd3_0) -- (cd3_2) (cd3_1) -- (cd3_3);
+\draw[color=red] (cd3_4) -- (cd3_6) (cd3_5) -- (cd3_7);
+\draw[color=blue] (cd3_0) -- (cd3_4) (cd3_1) -- (cd3_5) (cd3_2)--(cd3_6) (cd3_3)--(cd3_7);
+\end{tikzpicture}
+\caption{Dimension 3}
+\end{figure}
+}    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\only<5> {
+\begin{figure}[h]
+\begin{tikzpicture}[scale=1.6]
+\ttfamily{}
+% Cube de dimension 4
+\draw (6,0) node[fill=green,inner sep=1pt](cd4_0){\scriptsize 0000} -- (7,0) node[fill=green,inner sep=1pt](cd4_1){\scriptsize 0001};
+\draw (6,1) node[fill=green,inner sep=1pt](cd4_2){\scriptsize 0010} -- (7,1) node[fill=green,inner sep=1pt](cd4_3){\scriptsize 0011};
+\draw (6.5,0.5) node[fill=green,inner sep=1pt](cd4_4){\scriptsize 0100} -- (7.5,0.5) node[fill=green,inner sep=1pt](cd4_5){\scriptsize 0101};
+\draw (6.5,1.5) node[fill=green,inner sep=1pt](cd4_6){\scriptsize 0110} -- (7.5,1.5) node[fill=green,inner sep=1pt](cd4_7){\scriptsize 0111};
+\draw[color=red] (cd4_0) -- (cd4_2) (cd4_1) -- (cd4_3);
+\draw[color=red] (cd4_4) -- (cd4_6) (cd4_5) -- (cd4_7);
+\draw[color=blue] (cd4_0) -- (cd4_4) (cd4_1) -- (cd4_5) (cd4_2)--(cd4_6) (cd4_3)--(cd4_7);
+\draw (4,0.5) node[fill=cyan,inner sep=1pt](cd4_8){\scriptsize 1000} -- (5,0.5) node[fill=cyan,inner sep=1pt](cd4_9){\scriptsize 1001};
+\draw (4,1.5) node[fill=cyan,inner sep=1pt](cd4_10){\scriptsize 1010} -- (5,1.5) node[fill=cyan,inner sep=1pt](cd4_11){\scriptsize 1011};
+\draw (4.5,1) node[fill=cyan,inner sep=1pt](cd4_12){\scriptsize 1100} -- (5.5,1) node[fill=cyan,inner sep=1pt](cd4_13){\scriptsize 1101};
+\draw (4.5,2) node[fill=cyan,inner sep=1pt](cd4_14){\scriptsize 1110} -- (5.5,2) node[fill=cyan,inner sep=1pt](cd4_15){\scriptsize 1111};
+\draw[color=red] (cd4_8) -- (cd4_10) (cd4_9) -- (cd4_11);
+\draw[color=red] (cd4_12) -- (cd4_14) (cd4_13) -- (cd4_15);
+\draw[color=blue] (cd4_8) -- (cd4_12) (cd4_9) -- (cd4_13) (cd4_10)--(cd4_14) (cd4_11)--(cd4_15);
+\draw[color=violet] (cd4_0) -- (cd4_8) (cd4_1) -- (cd4_9) (cd4_2) -- (cd4_10) (cd4_3) -- (cd4_11) (cd4_4) -- (cd4_12) (cd4_5) -- (cd4_13) (cd4_6) -- (cd4_14) (cd4_7) -- (cd4_15);
+\end{tikzpicture}
+\caption{Dimension 4}
+\end{figure}
+}        
+\end{frame}
+
+\begin{frame}[fragile]{Hyper quick sort algorithm (2)}
+\scriptsize
+
+\begin{block}{\small Numbering vertices of hyper-cube}
+\begin{itemize}
+    \item The binary numbers of two linked nodes have a difference of one bit;
+    \item The distance between two nodes in a hypercube ( minimal number of nodes to access to go from
+          first node to second node ) is the number of bit which differe in their binary number;
+    \item It's the \textbf{Gray code} numbering.
+\end{itemize}        
+\end{block}
+
+\begin{exampleblock}{\small Ideas of the hyper quick sort algorithm}
+    \begin{itemize}
+        \item Initially, Data are distributed across all processes;
+        \item Each process sorts its local data;
+        \item Loop on dimension of the hypercube and for dimension $d$, consider pair of processes $\left(p;p+2^{d}\right)$
+        \item Process $p$ choose his median value as pivot and send value lesser than pivot to process $p+2^{d}$;
+        \item Process $p+2^{d}$ receive pivot and data from process $p$ and keep value greater than pivot;
+        \item Each process keep sorted value, using fusion sort algorithm to keep sorting.
+    \end{itemize}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Illustration of hyper quick sort}
+  
+    \begin{columns}
+      \column{1.5cm}
+      \textbf{\scriptsize Phase 1} :
+      \column{4cm}
+      \begin{tikzpicture}[scale=1.3]
+        \ttfamily{}
+        % Cube dimension 3
+        \draw (1,0) node[fill=green,inner sep=1pt](cd3_0){\scriptsize 000} -- (2,0) node[fill=green,inner sep=1pt](cd3_1){\scriptsize 001};
+        \draw (1,1) node[fill=green,inner sep=1pt](cd3_2){\scriptsize 010} -- (2,1) node[fill=green,inner sep=1pt](cd3_3){\scriptsize 011};
+        \draw (1.5,0.5) node[fill=cyan,inner sep=1pt](cd3_4){\scriptsize 100} -- (2.5,0.5) node[fill=cyan,inner sep=1pt](cd3_5){\scriptsize 101};
+        \draw (1.5,1.5) node[fill=cyan,inner sep=1pt](cd3_6){\scriptsize 110} -- (2.5,1.5) node[fill=cyan,inner sep=1pt](cd3_7){\scriptsize 111};
+        \draw (cd3_0) -- (cd3_2) (cd3_1) -- (cd3_3);
+        \draw (cd3_4) -- (cd3_6) (cd3_5) -- (cd3_7);
+        \draw[color=red,<->,thick] (cd3_0) -- (cd3_4);
+        \draw[color=red,<->,thick] (cd3_1) -- (cd3_5);
+        \draw[color=red,<->,thick] (cd3_2)--(cd3_6);
+        \draw[color=red,<->,thick] (cd3_3)--(cd3_7);
+        \draw (3,0) node[fill=green,inner sep=1pt] {\scriptsize $\leq p_{1}$};
+        \draw (0.5,1.5) node[fill=cyan,inner sep=1pt] {\scriptsize $> p_{1}$};
+      \end{tikzpicture}
+  
+      \column{1.5cm}
+      \textbf{\scriptsize Phase 2} :
+      \column{4cm}
+      \begin{tikzpicture}[scale=1.3]
+        \ttfamily{}
+        % Cube dimension 3
+        \draw (1,0) node[fill=green,inner sep=1pt](cd3_0){\scriptsize 000} -- (2,0) node[fill=green,inner sep=1pt](cd3_1){\scriptsize 001};
+        \draw (1,1) node[fill=cyan,inner sep=1pt](cd3_2){\scriptsize 010} -- (2,1) node[fill=cyan,inner sep=1pt](cd3_3){\scriptsize 011};
+        \draw (1.5,0.5) node[fill=blue!20,inner sep=1pt](cd3_4){\scriptsize 100} -- (2.5,0.5) node[fill=blue!20,inner sep=1pt](cd3_5){\scriptsize 101};
+        \draw (1.5,1.5) node[fill=red!20,inner sep=1pt](cd3_6){\scriptsize 110} -- (2.5,1.5) node[fill=red!20,inner sep=1pt](cd3_7){\scriptsize 111};
+        \draw[color=red,<->,thick] (cd3_0) -- (cd3_2);
+        \draw[color=red,<->,thick] (cd3_1) -- (cd3_3);
+        \draw[color=red,<->,thick] (cd3_4) -- (cd3_6);
+        \draw[color=red,<->,thick] (cd3_5) -- (cd3_7);
+        \draw (cd3_0) -- (cd3_4) (cd3_1) -- (cd3_5) (cd3_2)--(cd3_6) (cd3_3)--(cd3_7);
+        \draw (0.5,0) node[fill=green,inner sep=1pt] {\scriptsize $\leq p_{2}$};
+        \draw (0.5,1) node[fill=cyan,inner sep=1pt] {\scriptsize $> p_{2}$};
+        \draw (3,0.5) node[fill=blue!20,inner sep=1pt] {\scriptsize $\leq p_{3}$};
+        \draw (3,1.5) node[fill=red!20,inner sep=1pt] {\scriptsize $> p_{3}$};
+      \end{tikzpicture}
+    \end{columns}
+    \vspace*{5mm}
+    \begin{columns}
+      \column{1.5cm}
+      \textbf{\scriptsize Phase 3} :
+      \column{6cm}
+      \begin{tikzpicture}[scale=1.3]
+        \ttfamily{}
+        \draw[color=black] (1,0) node[fill=green,inner sep=1pt] (cd3_0){\scriptsize 000};
+        \draw[color=black] (2,0) node[fill=yellow,inner sep=1pt](cd3_1){\scriptsize 001};
+        \draw[color=black] (1,1) node[fill=cyan,inner sep=1pt](cd3_2){\scriptsize 010};
+        \draw[color=black] (2,1) node[fill=violet!20,inner sep=1pt](cd3_3){\scriptsize 011};
+        \draw[color=black] (1.5,0.5) node[fill=blue!20,inner sep=1pt](cd3_4){\scriptsize 100};
+        \draw[color=black] (2.5,0.5) node[fill=green!20,inner sep=1pt](cd3_5){\scriptsize 101};
+        \draw[color=black] (1.5,1.5) node[fill=red!20,inner sep=1pt](cd3_6){\scriptsize 110};
+        \draw[color=black] (2.5,1.5) node[fill=navyblue!20,inner sep=1pt](cd3_7){\scriptsize 111};
+        % Cube dimension 3
+        \draw[color=red,<->,thick] (cd3_0) -- (cd3_1);
+        \draw[color=red,<->,thick] (cd3_2) -- (cd3_3);
+        \draw[color=red,<->,thick] (cd3_4) -- (cd3_5);
+        \draw[color=red,<->,thick] (cd3_6) -- (cd3_7);
+        \draw (cd3_0) -- (cd3_2) (cd3_1) -- (cd3_3);
+        \draw (cd3_4) -- (cd3_6) (cd3_5) -- (cd3_7);
+        \draw (cd3_0) -- (cd3_4) (cd3_1) -- (cd3_5) (cd3_2)--(cd3_6) (cd3_3)--(cd3_7);
+        \draw (0.5,0) node[fill=green,inner sep=1pt] {\scriptsize $\leq p_{4}$};
+        \draw (0.5,1) node[fill=cyan,inner sep=1pt] {\scriptsize $\leq p_{6}$};
+        \draw (0.5,1.5) node[fill=red!20,inner sep=1pt] {\scriptsize $\leq p_{7}$};
+        \draw (0.5,0.5) node[fill=blue!20,inner sep=1pt] {\scriptsize $\leq p_{5}$};
+        \draw (3,0) node[fill=yellow,inner sep=1pt] {\scriptsize $> p_{4}$};
+        \draw (3,1) node[fill=violet!20,inner sep=1pt] {\scriptsize $> p_{6}$};
+        \draw (3,1.5) node[fill=navyblue!20,inner sep=1pt] {\scriptsize $> p_{7}$};
+        \draw (3,0.5) node[fill=green!20,inner sep=1pt] {\scriptsize $> p_{5}$};
+      \end{tikzpicture}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Hyperquicksort : complexity analysis}
+    \scriptsize
+    \begin{itemize}
+        \item Suppose we run algorithm on $nbp=2^{d}$ processes (hypercube dimension $d$);
+        \item Each process holds initially $Nl=\frac{N}{nbp}$ values;
+        \item \textbf{Initial sorting : } $Nl.\log_{2}(Nl)$ comparaisons;
+        \item \textbf{Pivot selection : } $\mathcal{O}(1)$ (one takes middle list element) for each dimension;
+        \item \textbf{Pivot broadcasting : }
+        \begin{itemize}
+            \item {\scriptsize Broadcast one pivot in a $k$ hypercube :  $k(t_{s}+t_{d})$;}
+            \item {\scriptsize For all iterations : $(d+\cdots+1)(t_{s}+t_{d}) = \frac{d(d-1)}{2}(t_{s}+t_{d})$ compaisons;}
+        \end{itemize}
+        \item \textbf{Split list from pivot value : } For sorted list of size $x$, $\log_{2}(x)$ comparaisons;
+        \item \textbf{Exchange part of list : } To exchange $\frac{x}{2}$ data : $2(t_{s}+\frac{x}{2}t_{d})$
+        \item \textbf{Fusion merge sort : } $\frac{x}{2}$ comparaisons
+    \end{itemize}
+
+    \begin{alertblock}{\small Total (for ideal balance)}
+        \begin{itemize}
+            \item $N_{l}.\log_{2}(N_{l})+\left(\log_{2}(N_{l}) + \frac{N_{l}}{2}\right).d$ comparaisons
+            \item $\left(\frac{d(d-1)}{2}+2d\right)t_{s} + \left(\frac{d(d-1)}{2}+d.N_{l}\right).t_{d}$ for message;
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\section{Bitonic sorting algorithm}
+
+\begin{frame}[fragile]{Bitonic sequences}
+    \scriptsize
+    \begin{alertblock}{\small Definition of a bitonic sequence}
+        \begin{itemize}
+        \item A sequence of values $\left\{a_{i}\right\}_{i\in[1;N]}$ would can split in two subsequences (of consecutive numbers), one increasing and one decreasing; e.g :
+        \[
+            \exists i\in\left[1;N\right] \mbox{ verifying } 
+            \left\{
+            \begin{array}{l}
+                a_{1} \leq a_{2} \leq \cdots \leq a_{i} \\
+                a_{i} \geq a_{i+1} \geq \cdots \geq a_{N}
+            \end{array}
+            \right.
+        \]
+        \underline{\textcolor{blue}{Example}} : 3, 5, 8, \textcolor{orange}{\textbf{19}}, 17, 14, 12, 11
+
+        \item \textbf{Or} a sequence which may be brought to such this form by a circular shifting of the elements of the sequence \\[2mm]
+        \underline{\textcolor{blue}{Example}} : \textcolor{blue}{12, 11}, 3, 5, 8, \textcolor{orange}{\textbf{19}}, 17, 14
+        \end{itemize}
+    \end{alertblock}
+
+    \begin{exampleblock}{\small Remarks}
+        \begin{itemize}
+            \item The first subsequence can be increasing \textbf{or} decreasing.
+            \item So a bitonic sequence (without considering circular shifting) can be increasing-decreasing or
+                  decreasing-increasing.
+            \item A monotone bitonic sequence is a sorted sequence (increasing or decreasing);
+            \item All sequences with three or less elements are bitonics.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Splitting a bitonic sequence}
+    \scriptsize
+
+    \begin{exampleblock}{\small Bitonic split}
+        Let's $\left\{a_{i}\right\}_{i\in\left[1;N\right]}$ a bitonic sequence. So the subsequences 
+        \[
+            \left\{
+            \begin{array}{lcl}
+                \left\{b_{i}\right\}_{i\in\left[1;\frac{N}{2}\right]} & = & \left\{\min(a_{1},a_{1+\frac{N}{2}}), \min(a_{2},a_{2+\frac{N}{2}}),\cdots, \min(a_{\frac{N}{2}-1,a_{N}})\right\}\\[2mm]
+                \left\{c_{i}\right\}_{i\in\left[1;\frac{N}{2}\right]} & = & \left\{\max(a_{1},a_{1+\frac{N}{2}}), \max(a_{2},a_{2+\frac{N}{2}}),\cdots, \max(a_{\frac{N}{2}-1,a_{N}})\right\}\\
+            \end{array}
+            \right.
+        \]
+        \begin{itemize}
+            \item are bitonic sequences;
+            \item $\displaystyle \forall i\in\left[1;\frac{N}{2}\right]; b_{i} \leq c_{i}$
+        \end{itemize}
+    \end{exampleblock}
+
+    \begin{block}{\small Example}
+        \[
+            \begin{array}{cccccccc}
+                1 & 5 & 8 & 7 & \cellcolor{yellow}6 & \cellcolor{yellow}4 & \cellcolor{yellow}3 & \cellcolor{yellow}2
+            \end{array}
+            \stackrel{\mbox{\scriptsize split}}{\Longrightarrow}
+            \begin{array}{cccccccc}
+                1 & 4 & 3 & 2 & \cellcolor{yellow}6 & \cellcolor{yellow}5 & \cellcolor{yellow}8 & \cellcolor{yellow}7
+            \end{array}
+        \]
+    \end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]{Sorting a bitonic sequence (SBS algorithm)}
+    \scriptsize
+
+    \begin{block}{\small Algorithm}
+        Apply split procedure on bitonic sequence and repeat this splitting procedure on subsequences until having one element per subsequences to obtain sorted sequence.
+    \end{block}
+
+    \begin{exampleblock}{\small Example}
+        \begin{enumerate}
+            \item<1-4> \[
+            \begin{array}{cccccccc}
+                1 & 5 & 8 & 7 & 6 & 4 & 3 & 2
+            \end{array}
+        \]
+        \item<2-4> 
+        \[
+            \begin{array}{cccccccc}
+                1 & 4 & 3 & 2 & \cellcolor{yellow}6 & \cellcolor{yellow}5 & \cellcolor{yellow}8 & \cellcolor{yellow}7
+            \end{array}
+        \]
+        \item<3-4>
+        \[
+            \begin{array}{cccccccc}
+                1 & 2 & \cellcolor{orange}3 & \cellcolor{orange}4 & \cellcolor{yellow}6 & \cellcolor{yellow}5 & \cellcolor{cyan}8 & \cellcolor{cyan}7
+            \end{array}
+        \]
+        \item<4>
+        \[
+            \begin{array}{cccccccc}
+                1 & \cellcolor{red}2 & \cellcolor{orange}3 & \cellcolor{orange!40!yellow}4 & \cellcolor{yellow}5 & \cellcolor{yellow!50!cyan}6 & \cellcolor{cyan}7 & \cellcolor{cyan!50!white}8
+            \end{array}
+        \]
+        \end{enumerate}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Building a bitonic sequence}
+    \scriptsize
+    \begin{block}{\small Procedure}
+        \begin{enumerate}
+            \item Split the sequence in two-elements subsequences (which are bitonics !);
+            \item \label{itm::secondStepBitonic}Sort subsequences alterning increasing and decreasing sorting (using SBS algorithm);
+            \item Concatenate two adjacent lists to get a longer bitonic sequence;
+            \item Repeat from step \ref{itm::secondStepBitonic} until the full list becomes a bitonic sequence.
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Example on 8 elements}
+    \scriptsize
+    \begin{tikzpicture}[scale=0.7]
+    \foreach \x / \it in {5/0,1/1,4/2,2/3,10/4,8/5,3/6,6/7}
+    \draw (\it,1) node{\x};
+    \foreach \x  in {0,...,7}
+    \draw (\x,0.6) -- (\x,0.35);
+    \foreach \x / \sg in {0.5/+,2.5/-,4.5/+,6.5/-}
+    \draw (\x,0) node[draw,text width=12mm,text centered]{$SBS[2^{1}]$};
+    \foreach \x  in {0,...,7}
+    \draw[->] (\x,-0.35) -- (\x,-0.6);
+    \foreach \x / \it in {1/0,5/1,4/2,2/3,8/4,10/5,6/6,3/7}
+    \draw (\it,-1) node{\x};
+    %
+    \draw[->] (8,0.35) -- (8,-0.35);
+    \draw[fill=orange] (7.5,0.1) rectangle (8.5,-0.1);
+    \draw (9,0) node[right,text width=3cm]{\scriptsize One step of SBS};
+    %
+    \draw[->] (0,-2.25) -- (1.4,-1.25);
+    \draw[->] (1.6,-1.25) -- (3.,-2.25);
+    \draw[->] (4,-2.25) -- (5.4,-1.25);
+    \draw[->] (5.6,-1.25) -- (7.,-2.25);
+    %
+    \foreach \x  in {0,...,7}
+    \draw (\x,-2.4) -- (\x,-2.65);
+    \foreach \x / \sg in {1.5/+,5.5/-}
+    \draw (\x,-3) node[draw,text width=26mm,text centered]{$SBS[2^{2}]$};
+    \foreach \x  in {0,...,7}
+    \draw[->] (\x,-3.35) -- (\x,-3.6);
+    \foreach \x / \it in {1/0,2/1,4/2,5/3,10/4,8/5,6/6,3/7}
+    \draw (\it,-4) node{\x};
+    %
+    \draw[->] (8,-2.65) -- (8,-3.35);
+    \draw[fill=orange] (7.5,-2.85) rectangle (8.5,-2.95) rectangle (7.5,-3.05);
+    \draw (9,-3) node[right,text width=3cm]{\scriptsize Two steps of SBS};
+    %
+    \draw[->] (0,-5.25) -- (3.4,-4.25);
+    \draw[->] (3.6,-4.25) -- (7.,-5.25);
+    \foreach \x  in {0,...,7}
+    \draw (\x,-5.4) -- (\x,-5.65);
+    \draw (3.5,-6) node[draw, text width=56mm,text centered]{$+SBS[2^{3}]$};
+    \foreach \x  in {0,...,7}
+    \draw[->] (\x,-6.35) -- (\x,-6.6);
+    \foreach \x / \it in {1/0,2/1,3/2,4/3,5/4,6/5,8/6,10/7}
+    \draw (\it,-7) node{\x};
+    %
+    \draw[->] (8,-5.65) -- (8,-6.35);
+    \draw[fill=orange] (7.5,-5.8) rectangle (8.5,-5.9) rectangle (7.5,-6.0) rectangle (8.5,-6.1);
+    \draw (9,-6) node[right,text width=3cm]{\scriptsize Three steps of SBS};
+    %
+    \draw[->] (0,-8) -- (7,-7.25);
+    \end{tikzpicture}
+    
+    \end{frame}
+    
+    \begin{frame}{Bitonic sort analysis}
+    
+    \alert{Complexity of bitonic sort} :
+    \begin{itemize}
+    \item With $n=2^{k}$, there are $k$ phases, each involving $1,2,\ldots, k$ steps,
+      respectively;
+    \item The total number of steps is 
+    \begin{equation}
+    \sum_{i=1}^{k}i = \frac{k(k+1)}{2} = O(k^{2}) = O(\log_{2}^{2} n)
+    \end{equation}
+    \item Total complexity is $O(n\log_{2}^{2} n)$
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Adapt bitonic sort to distributed parallel architecture}
+        \scriptsize
+        \begin{block}{Main ideas}
+            \begin{itemize}
+                \item First sort with the fastest sort algorithm local data in increasing values if rank is even and decreasing values if rank is odd;
+                \item Pairing inside a subcommunicator  processes to define a bitonic sequence;
+                \item And apply bitonic sort algorithm, grouping processes per four, height and so\ldots
+                \item Sub-communicators build here are very similar to the sub-communicators build with hyperquick sort algorithms !
+            \end{itemize}
+        \end{block}
+
+    \end{frame}
+
+\section{Bucket-sort algorithms}
 \end{document}
