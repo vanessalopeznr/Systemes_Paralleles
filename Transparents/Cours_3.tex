@@ -28,7 +28,7 @@
 \newminted{cpp}{}
 }
 \usepackage{hyperref}
-\usetikzlibrary{shadows, arrows, decorations.pathmorphing, fadings, shapes.arrows, positioning, calc, shapes, fit, matrix,math}
+\usetikzlibrary{shadows, arrows, decorations.pathmorphing, fadings, shapes.arrows, positioning, calc, shapes, fit, matrix,math, tikzmark}
 
 \definecolor{lightblue}{RGB}{0,200,255} 
 \definecolor{paper}{RGB}{255,247,197}
@@ -60,6 +60,7 @@
 }
 
 \setbeamercovered{transparent}
+\newcommand{\compute}[1]{\pgfmathparse{#1}\pgfmathresult}
 
 \title[Parallel programming\hspace{2em}]{Parallel sorting algorithms}
 \subtitle{Theory and implementation}
@@ -1215,4 +1216,89 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
     \end{frame}
 
 \section{Bucket-sort algorithms}
+
+
+\begin{frame}[fragile]{Bucket Sort algorithm}
+\scriptsize
+\begin{block}{Algorithm}
+    Distribute elements of a list into a fixed number of buckets, and sort the elements inside each buckets.
+    \begin{itemize}
+        \item Setup an array of initially empty "buckets"
+        \item \textbf{Scatter} : Put each element of the list in right bucket
+        \item Sort the elements inside each bucket 
+        \item \textbf{Gather} : Visit each bucket in order and put all elements back in original list
+    \end{itemize}
+
+    \begin{figure}
+    \begin{tikzpicture}
+        \foreach \x / \p in { 0.13/0,0.25/1,0.15/2,0.43/3,0.23/4,0.49/5,0.9/6,0.85/7,0.75/8, 0.71/9}
+        {
+            \node[draw, inner sep=1pt] (E\p) at (0.5*\p,0.) {\tiny \x};
+            %\node[draw, circle, inner sep=1pt] (P\r) at (0.6*\y,-0.6*\x) {\tiny $P_{\r}$};
+        }
+        \node at (5.5,0.) {\tiny Values};
+        \foreach \x / \v in { 0/0., 1/0.1, 2/0.2, 3/0.3, 4/0.4, 5/0.5, 6/0.6, 7/0.7, 8/0.8, 9/0.9, 10/1.} {
+            \draw (0.5*\x, -0.75) -- (0.5*\x,-0.5);
+            \node at (0.5*\x, -0.35) {\tiny \textcolor{blue}{\v}};
+        }
+        \node at (5.5,-0.62) {\tiny Buckets};
+        \node at (0.75,-0.5) {\textcolor{orange}{\tiny 0.13}};
+        \node at (0.75,-0.7) {\textcolor{orange}{\tiny 0.15}};
+
+        \node at (1.25,-0.5) {\textcolor{orange}{\tiny 0.25}};
+        \node at (1.25,-0.7) {\textcolor{orange}{\tiny 0.23}};
+
+        \node at (2.25,-0.5) {\textcolor{orange}{\tiny 0.43}};
+        \node at (2.25,-0.7) {\textcolor{orange}{\tiny 0.49}};
+
+        \node at (3.75,-0.5) {\textcolor{orange}{\tiny 0.75}};
+        \node at (3.75,-0.7) {\textcolor{orange}{\tiny 0.71}};
+
+        \node at (4.25,-0.5) {\textcolor{orange}{\tiny 0.85}};
+
+        \node at (4.75,-0.5) {\textcolor{orange}{\tiny 0.9}};
+
+        \foreach \x / \p in { 0.13/0,0.15/1,0.23/2,0.25/3,0.43/4,0.49/5,0.71/6,0.75/7,0.85/8, 0.9/9}
+        {
+            \node[draw, inner sep=1pt] (E\p) at (0.5*\p,-1.) {\tiny \textcolor{red}{\x}};
+            %\node[draw, circle, inner sep=1pt] (P\r) at (0.6*\y,-0.6*\x) {\tiny $P_{\r}$};
+        }
+        \node at (5.5,-1.) {\tiny Sorted values};
+    \end{tikzpicture}
+\end{figure}
+\begin{itemize}
+    \item Complexity at best : $N + \frac{N}{k}\log_{2}(\frac{N}{k})$ comparaisons ($k$ = numbers of buckets)
+    \item \alert{Difficulty} : How choose the intervals for the buckets ?
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]{Parallel bucket sort}
+    \scriptsize
+    \begin{multicols}{2}
+    \begin{block}{\small Main ideas for the parallel algorithm}
+        \begin{itemize}
+            \item Each process is seen as one bucket;
+            \item Compute intervals for buckets :
+            \begin{itemize}
+                \item {\scriptsize Sort local data}
+                \item {\scriptsize Take $nbp+1$ values at regular intervals}
+                \item {\scriptsize Gather values in bucket array}
+                \item {\scriptsize Extract $nbp+1$ values to find intervals for buckets}
+            \end{itemize}
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{\small Analysis}
+        \begin{itemize}
+            \item Local sort : $\frac{N}{nbp}\log_{2}(\frac{N}{nbp})$ comparaisons;
+            \item Gather bucket array : $nbp(t_{s} + (nbp+1)t_{d})$
+            \item Sort bucket array : $\frac{nbp}\log_{2}(nbp)$ comparaisons;
+            \item Distribute data in buckets : $(nbp-1)\left(t_{s} + \frac{N}{nbp^{2}}t_{d}\right)$
+            \item Sort local data : $2(nbp-1)\frac{N}{nbp}$ comparaisons (fusion sort)
+        \end{itemize}
+    \end{exampleblock}
+\end{multicols}
+\end{frame}
 \end{document}
