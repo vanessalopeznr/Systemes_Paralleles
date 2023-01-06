@@ -1,0 +1,9 @@
+# latex output
+_minted-*
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
