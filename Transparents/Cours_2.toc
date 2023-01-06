@@ -1,5 +1,0 @@
-\babel@toc {french}{}\relax 
-\beamer@sectionintoc {1}{Performance tools}{3}{0}{1}
-\beamer@sectionintoc {2}{Embarrassingly parallel algorithms}{10}{0}{2}
-\beamer@subsectionintoc {2}{1}{Definition and properties}{11}{0}{2}
-\beamer@sectionintoc {3}{Nearly embarrasingly parallel algorithm}{17}{0}{3}
