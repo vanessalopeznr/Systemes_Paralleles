@@ -73,7 +73,7 @@
     \begin{block}{The main story}
         \begin{itemize}
             \item Processors with multiples computing cores for faster computation;
-            \item Using simultaneously many cores for an unique application;
+            \item Using simultaneously many cores for a unique application;
             \item Performance benchmark in scientific computing is given by the number of FLoating Operations Per Seconds (FLOPS)
         \end{itemize}
     \end{block}
@@ -93,14 +93,14 @@
     \small
     \begin{itemize}
         \item \textbf{\textcolor{NavyBlue}{Gordon Moore's "Law"}} : In 1965, Gordon Moore (one of Intel's fonder) observes that the number of transistors
-              for each generation of processors double in heighteen months, doubling the computing power;
-        \item In fact, \alert{it isn't a law}, but it has been used by processors builder as a map road until 2000 years to raise the frequency
+              for each generation of processors doubles in eighteen months, doubling the computing power;
+        \item In fact, \alert{it isn't a law}, but it has been used by processors builder as a roadmap until 2000 years to raise the frequency
               of computing cores;
-        \item \textbf{\textcolor{red}{Limitations of Gordon Moore Law}} : The miniaturisation of transistors and the raising of their
-              frequencies raises the heat inside the processor. Morever, the miniaturisation is now at molecular scale and one must
+        \item \textbf{\textcolor{red}{Limitations of Gordon Moore's Law}} : The miniaturisation of transistors and the raising of their
+              frequencies raises the heat inside the processor. Moreover, the miniaturisation is now at molecular scale and one must
               consider quantum effects (as tunnel effect) when making a processor;
-        \item Nowaday, \textbf{\textcolor{DarkGreen}{the Moore law is always verified}}, but one don't double now the number of transistors 
-              inside a computing core but raise the number of computing core inside a processor or a computer.
+        \item Nowadays, \textbf{\textcolor{DarkGreen}{Moore's law is still verified}}, not by doubling the number of transistors 
+              inside a computing core, but rather by raising the number of computing cores inside a processor or a computer.
     \end{itemize}
 \end{frame}
 
@@ -113,10 +113,10 @@
     \caption{Car's control command}
     \end{figure}
     \begin{itemize}
-        \item Many tiny computers specialized for specifics tasks : ABS, motor optimization, lighting, climatisation, wheel pressure optimization, 
+        \item Many tiny computers specialized for specifics tasks : ABS, motor optimization, lighting, air conditioning, wheel pressure optimization, 
               mixing fuel/air, battery optimization, and so on.
         \item Computation must be terminated in constraint times;
-        \item Lot of parameters are interdependants (external air temperature, wheel pressure, optimal speed and oil consommation)
+        \item Lot of parameters are interdependent (external air temperature, wheel pressure, optimal speed and oil consumption)
     \end{itemize}
     \end{multicols}
 \end{frame}
@@ -131,10 +131,10 @@
         \end{figure}
     \begin{itemize}
         \item Another control command : managing nuclear power reactors;
-        \item High real time contraint algorithms;
+        \item High real time constraint algorithms;
         \item Lot of complex computations;
-        \item One computing core isn't enough to satisty tiny real time constraints;
-        \item \textcolor{blue}{\bf Solution} : Concurrency execution of interdependant tasks on many computing cores; 
+        \item One computing core isn't enough to satisfy tiny real time constraints;
+        \item \textcolor{blue}{\bf Solution} : Concurrent execution of interdependent tasks on many computing cores; 
     \end{itemize}
 \end{multicols}
 \end{frame}
@@ -149,10 +149,10 @@
         \end{figure}
 
         \begin{itemize}
-            \item Turbulence : very small phenomena (millimeter scale). Need a mesh with lof of tiny triangles;
-            \item Typically, the mesh must contain five to ten billions of vertices with five unknowned variables for each vertex; 
+            \item Turbulence : very small phenomena (millimeter scale). Need a mesh with lots of tiny triangles;
+            \item Typically, the mesh must contain five to ten billions of vertices with five unknown variables for each vertex; 
             \item Minimum memory requirement : 7 To 
-            \item Sequential computation time : 23 days to simulate ${\frac{1}{100}}^{e}$ seconds
+            \item Sequential computation time : 23 days to simulate $10^{-2}$ seconds
         \end{itemize}
     \end{multicols}
 \end{frame}
@@ -163,11 +163,11 @@
   \begin{multicols}{2}
         \begin{figure}[h]
             \includegraphics[width=\linewidth]{../Images/HAL.png}
-            \caption{A very famous artifical intelligence (HAL)}
+            \caption{A very famous artificial intelligence (HAL)}
         \end{figure}
         \begin{itemize}
-        \item Deep learning used in AI to categorize pictures, automatic translations, Cancereous cells detection, automatic vehicles, and so.
-        \item In sequential required more than one year to learn;
+        \item Deep learning used in AI to categorize pictures, automatic translations, cancerous cells detection, automatic vehicles, and so.
+        \item In sequential, required more than one year to learn;
         \item with GPGPU, required about one month;
         \item \textcolor{blue}{March 2016} : Alphago wins versus world GO human champion (supervised learning);
         \item \textcolor{DarkGreen}{October 2017}: Alphago zero wins versus alphago at 100 games to zero (deep learning).
@@ -184,7 +184,7 @@
   \end{figure}
 
   \begin{itemize}
-  \item Needed for optical captors for navigation of autonomous vehicules, for super-resolution picture issued from low resolution video, and so on.
+  \item Needed for optical captors for navigation of autonomous vehicles, for super-resolution picture issued from low resolution video, and so on.
   \item Lot of computations needed (PDE equation to solve);
   \item Must use GPGPU and parallel algorithms to have real time constraint;
   \end{itemize}
@@ -207,7 +207,7 @@
     Frontier          &    591 872 &  1 102 & HPE        & USA   & 21 000 \\ \hline
   \end{tabular}
   \end{center}
-  \textbf{\textcolor{blue}{Remarque}} : Nowaday, we look for Flops/Watt performances
+  \textbf{\textcolor{blue}{Remark}} : Nowadays, we look for Flops/Watt performances
 \end{frame}
 
 \section{Classification of parallel architectures}
@@ -229,16 +229,16 @@
         \draw[color=red] (P\x) -- (M\x);
       }
     \end{tikzpicture}
-    \caption{\scriptsize Simplified scheme of memory shared parallel architecture}
+    \caption{\scriptsize Simplified scheme of shared memory parallel architecture}
   \end{figure}
 
-  Many computing cores shared the same main memory
+  Many computing cores share the same main memory
   
-  \begin{exampleblock}{Exemples}
+  \begin{exampleblock}{Examples}
     \begin{itemize}
-    \item The recent muti-cores processors;
-    \item The graphic cards with 3D acceleration;
-    \item The phones, pad, etc.
+    \item Recent multi-cores processors;
+    \item Graphic cards with 3D acceleration;
+    \item Phones, pad, etc.
     \end{itemize}
   \end{exampleblock}
 
@@ -255,7 +255,7 @@
 \begin{frame}[fragile]{Memory access}
 
   \begin{figure}[ht]
-    \begin{tikzpicture}[scale=0.9]
+    \begin{tikzpicture}[scale=0.8]
       \draw[color=black,->](0,0) -- (10.5,0);
       \draw[color=black,->](0,0) -- (0,6);
       \node at (5,-0.5) {Years};
@@ -311,14 +311,14 @@
 
 \begin{alertblock}{Conclusion}
 \begin{itemize}
-    \item Memory is more and more slower comparing to the instruction execution of the processor; 
-    \item It's worst with multicore architecture !
+    \item Memory is slower and slower comparing to the instruction execution of the processor; 
+    \item It's even worse with multicore architecture !
 \end{itemize}
 \end{alertblock}
 
 \end{frame}
 
-\begin{frame}[fragile]{How works a RAM ?}
+\begin{frame}[fragile]{How deos RAM work ?}
 
     \begin{figure}[ht]
         \begin{tikzpicture}
@@ -337,7 +337,7 @@
 \end{figure}
 \end{frame}
 
-\begin{frame}{Interleaved rams}
+\begin{frame}{Interleaved RAMs}
     \small
     \begin{center}
         \begin{tikzpicture}
@@ -430,7 +430,7 @@
 
     \begin{exampleblock}{Cache memory}
         \begin{itemize}
-            \item Fast small memory unit where one store temporary data;
+            \item Fast small memory unit where one stores temporary data;
             \item When multiple access to a same variable \alert{in a short time}, speedup the read or write access;
             \item Cache memory managed by the CPU (but cache memory for GPU can be managed by the programmer);
             \item \textbf{Consequence} : To optimize his program, the programmer must know the strategies used by the CPU.
@@ -442,7 +442,7 @@
 \begin{frame}[fragile]{Cache memory}
     \begin{block}{CPU Strategy}
         \begin{itemize}
-            \item \textbf{Cache line} : store contiguous memory variables in cache (64 bytes on intel processor);
+            \item \textbf{Cache line} : store contiguous memory variables in cache (64 bytes on Intel processor);
             \item \textbf{Associative memory cache} : Each cache memory address mapped on fixed RAM address (with a modulo).
         \end{itemize}
     \end{block}
@@ -451,14 +451,14 @@
         \begin{itemize}
             \item Better to have contiguous access in memory;
             \item Better to use as soon as possible data stored in cache;
-            \item \alert{Spatial and time localisation of data}.
+            \item \alert{Spatial and time localization of data}.
         \end{itemize}
     \end{alertblock}
 \end{frame}
 
 
 
-\begin{frame}[fragile]{memory organization on multi-processor computer}
+\begin{frame}[fragile]{Memory organization on multi-processor computer}
     \scriptsize
     \begin{center}
     \begin{tikzpicture}
@@ -486,10 +486,10 @@
     
     {\scriptsize
     \begin{itemize}
-    \item An unique cache contains the datum : value is valid, none synchronization needed;
-    \item Datum shared with another memory caches : At each access, verify if the datum is modified by another core and write as invalid when modifiying his value;
+    \item A unique cache contains the datum : value is valid, no synchronization needed;
+    \item Datum shared with another memory cache : At each access, verify if the datum is modified by another core and write as invalid when modifying its value;
     \item Modify the value in the cache : value now not valid in RAM : update the value in RAM if another core reads the value;
-    \item Value is invalid for cache. The next read of this value must access of the value in RAM.
+    \item Value is invalid for cache. The next read of this value must access the value in RAM.
     \end{itemize}
     }
     
@@ -551,7 +551,7 @@
         \end{tikzpicture}
         \end{center}
         
-        Same issue with cache coherency, but need too coherence of data between cache levels. Complexity raises with the number of 
+        Same issue with cache consistency, but need coherence of data between cache levels. Complexity raises with the number of 
         cache levels.
         
         \end{frame}
@@ -567,9 +567,9 @@ Many tools can be used to use many "threads" and the synchronization in memory. 
   \item TBB (Threading Building Block library, Intel) : Open source library from Intel
   \end{itemize}
  
-But memory conflict access must be cared for the programmer :
+But the programmer must take care of memory conflict access :
 \begin{itemize}
-    \item When a thread writes a datum and some other threads read simultaneously the same datum;
+    \item When a thread writes a datum and some other threads read simultaneously that same datum;
     \item When some thread writes at the same datum;
     \item Doesn't rely on the instruction order in the program ! (out-of-order optimization by compiler and processor).
 \end{itemize}
@@ -611,7 +611,7 @@ But memory conflict access must be cared for the programmer :
     \node[above=2ex of Ram3.north] (R3) {};
     \node[right=1em of R1.east] (R0){};
     \node[left=1em of R3.west] (R4) {};
-    \draw[thick,red] (R0.east) -- (R1.center) -- (R2.center) node[above] {Réseau}-- (R3.center) -- (R4.west);
+    \draw[thick,red] (R0.east) -- (R1.center) -- (R2.center) node[above] {Network}-- (R3.center) -- (R4.west);
     \draw[thick,red] (Ram1) -- (R1.center);
     \draw[thick,red] (Ram2) -- (R2.center);
     \draw[thick,red] (Ram3) -- (R3.center);
@@ -620,10 +620,10 @@ But memory conflict access must be cared for the programmer :
     \end{center}
     
     \begin{itemize}
-      \item Each computing unit can read/write on local ram : the set containing the computing unit and the ram is called \textbf{Computing node};
+      \item Each computing unit can read/write on local RAM : the set containing the computing unit and the RAM is called \textbf{Computing node};
       \item The data are exchanged between computing nodes through a specialized bus or specific ethernet link;
-      \item On ethernet link, it's the responsability of the programmer to exchange explicitly the data between computing nodes;
-      \item Need specifics efficiency algorithms and a library;
+      \item On ethernet link, it's the responsibility of the programmer to exchange explicitly the data between computing nodes;
+      \item Need specific efficient algorithms and libraries;
       \item Possible to compute on many thousands of computing cores;
       \item Only limited by electricity consumption (linear cost);
      \end{itemize}    
@@ -631,16 +631,16 @@ But memory conflict access must be cared for the programmer :
 
 \begin{frame}[fragile]{Distributed parallelism context}
     \small
-    All libraries managing the distributed parallelims computation provide similars functionnalities.
+    All libraries managing the distributed parallelism computation provide similar functionalities.
 
-    \begin{block}{\small Running an distributed parallel application}
+    \begin{block}{\small Running a distributed parallel application}
         \begin{itemize}
             \item An application is provided to the user to run his application(s) on a wanted number \texttt{nbp} of computing nodes (given when running the application);
             \item The computing nodes where the application(s) is launched is defined by default or in a file provided by the user;
             \item The default output for all processes are the terminal output from which was launched the application;
             \item A communicator (defining a set of processes) is defined by default including all launched processes (\verb@MPI_COMM_WORLD@);
-            \item The application gives an unique number for each process in a communicator (numbering from zero to \texttt{nbp}-1);
-            \item All processes terminates the program at the same time;
+            \item The application gives a unique number for each process in a communicator (numbering from zero to \texttt{nbp}-1);
+            \item All processes terminate the program at the same time;
         \end{itemize}
     \end{block}
 \end{frame}
@@ -671,9 +671,9 @@ int main(int nargs, char const* argv[])
 
 \end{frame}
 
-\begin{frame}[fragile]{Point to point data echange}
+\begin{frame}[fragile]{Point to point data exchange}
     \scriptsize
-    A process send some data in a message to another process which receives this message.
+    A process sends some data in a message to another process which receives this message.
     \begin{multicols}{2}
     \begin{block}{\small Constitution of a data message to send}
         \begin{itemize}
@@ -689,7 +689,7 @@ int main(int nargs, char const* argv[])
         \begin{itemize}
             \item The communicator used to receive the data;
             \item A memory address of a buffer where store the received data;
-            \item the number of data to receive;
+            \item The number of data to receive;
             \item The type of the data (integer, real, user def type, and so.)
             \item The rank of the sender process (can be any process);
             \item A tag number to identify the message (can be any tag if needed)
@@ -713,11 +713,11 @@ int main(int nargs, char const* argv[])
     \scriptsize
     \begin{block}{Definition}
         \begin{itemize}
-            \item Interlocking is a situation where many processes are waiting each other for a infinite time to complete their messages;
-            \item By example, process one wait to receive a message from 0 and 0 wait to receive a message from 1;
-            \item Or process zero sends a message to 1 and process one wait a message from 0 but with wrong tag !
+            \item Interlocking is a situation where many processes are waiting each other for an infinite time to complete their messages;
+            \item For example, process 1 waits to receive a message from 0 and 0 waits to receive a message from 1;
+            \item Or process 0 sends a message to 1 and process 1 waits a message from 0 but with wrong tag !
             \item Sometimes, interlocking can be very hard to find !
-            \item \textbf{Rule of thumb} : Be careful for each send to have a corresponding receive with right tag and expeditor.
+            \item \textbf{Rule of thumb} : Be careful that each send has a corresponding receive, with correct tag and expeditor.
         \end{itemize}
     \end{block}
 
@@ -766,15 +766,15 @@ else if (rank==1)
         \begin{itemize}
             \item Blocking message : Wait the complete reception of the message before returning from the function;
             \item Non blocking message : Post the message to send or receive and return from the function immediatly ! 
-            \item The status of non blocking message is update in a request struct. (not yet send/recv, sending/receiving or sended/received)
+            \item The status of non blocking message is updated in a request struct. (not yet sent/recv, sending/receiving or sent/received)
             \item Allows to test or wait for the message to be completed. 
         \end{itemize}
     \end{block}
 
-    \begin{exampleblock}{When use no blocking message ?}
+    \begin{exampleblock}{When to use non blocking message ?}
         \begin{itemize}
             \item When one can compute using other data during messages exchanges to hide message exchange cost;
-            \item To simplify algorithms to ensure none interlocking situations.
+            \item To simplify algorithms and to ensure no interlocking situations occur.
         \end{itemize}
     \end{exampleblock}
 
@@ -831,40 +831,40 @@ else if (rank==1)
 \end{frame}
 
 
-\begin{frame}[fragile]{Bufferized or non bufferized messages}
+\begin{frame}[fragile]{Buffered or non buffered messages}
 
-    \begin{block}{Bufferized messages}
+    \begin{block}{Buffered messages}
         \begin{itemize}
-            \item A non blocking send is copied in a buffer before to be sended;
-            \item $\Rightarrow$ \textcolor{DarkGreen}{After calling a non blocking send, the user can modify the sended data without
+            \item A non blocking send is copied in a buffer before to be sent;
+            \item $\Rightarrow$ \textcolor{DarkGreen}{After calling a non blocking send, the user can modify the sent data without
                   changing the values to send};
             \item It's the default behavior when we send a message
-            \item But the copy of the data in a buffer has a memory and cpu cost !
-            \item We can to call send functions which doesn't copy the data in a buffer;
-            \item \alert{It's the responsability of the user to avoid to change data before the synchronization of the message !}
+            \item But the copy of the data in a buffer has a memory and CPU cost !
+            \item We can call send functions which doesn't copy the data in a buffer;
+            \item \alert{It's the responsibility of the user to avoid to change data before the completion of the message !}
         \end{itemize}
     \end{block}
 \end{frame}
 
-\begin{frame}[fragile]{Example of non bufferized messages}
+\begin{frame}[fragile]{Example of non buffered messages}
     \begin{multicols}{2}
 \begin{minted}{c++}
 std::vector<double> tab{3.,5.,7.,11.};
-// Blocking non bufferized send
+// Blocking non buffered send
 MPI_Ssend(tab.data(), tab.size(), 
           MPI_DOUBLE, 1, 104, commGlob);
-// OK, tab is sended when we 
+// OK, tab is sent when we 
 //     modify the buffer
 tab[3] = 13.;
 \end{minted}
 \textcolor{DarkGreen}{Right example}
 \begin{minted}{c++}
 std::vector<double> tab{3.,5.,7.,11.};
-// Non blocking non bufferized send
+// Non blocking non buffered send
 MPI_Issend(tab.data(), tab.size(), 
            MPI_DOUBLE, 1, 104, commGlob,&request);
 MPI_Wait(&request, &status);
-// OK, tab is sended when we 
+// OK, tab is sent when we 
 //     modify the buffer
 tab[3] = 13.;
 \end{minted}
@@ -873,11 +873,11 @@ tab[3] = 13.;
 \columnbreak
 \begin{minted}{c++}
 std::vector<double> tab{3.,5.,7.,11.};
-// Non blocking non bufferized send
+// Non blocking non buffered send
 MPI_Issend(tab.data(), tab.size(), 
            MPI_DOUBLE, 1, 104, commGlob,&request);
 // ERROR, we modify the buffer before
-//        than the tab is sended !
+//        than the tab is sent !
 tab[3] = 13.;
 \end{minted}
 \textcolor{red}{Wrong example}
@@ -886,7 +886,7 @@ tab[3] = 13.;
 
 \begin{frame}[fragile]{Collective messages}
 \scriptsize
-\begin{exampleblock}{\scriptsize What is the collective communication}
+\begin{exampleblock}{\scriptsize What is collective communication}
     \begin{itemize}
         \item Broadcast data from one process to all processes;
         \item Scatter data from one process to all processes;
@@ -899,9 +899,10 @@ tab[3] = 13.;
 
 \begin{alertblock}{\scriptsize Why collective communication}
 \begin{itemize}
-    \item Point to point communication is enough for all algorithms !
+    \item Point to point communication is sufficient for all algorithms !
     \item But, for some parallel operations (broadcasting, reduction, scattering), the optimal algorithm depends on net topology;
-    \item Distributed parallel libraries provides collective communication which are optimized for all net topology;
+    \item Distributed parallel libraries provide collective communication which are optimized for all net topology;
+    \item The resulting algorithm is clearer.
 \end{itemize}
 \end{alertblock}
 \end{frame}
@@ -909,21 +910,21 @@ tab[3] = 13.;
 \begin{frame}[fragile]{Distributed parallel rules}
 
     \begin{itemize}
-        \item Ethernet data exchange is very slow comparing to memory access : \textcolor{blue}{limit as possible the data exchanges};
+        \item Ethernet data exchange is very slow compared to memory access : \textcolor{blue}{limit as possible the data exchanges};
         \item To hide data exchange cost, it's better to compute some values during the exchange of data : \textcolor{blue}{prefer to use non blocking message exchange}
         \item Each message has an initial cost : \textcolor{blue}{prefer to regroup data in a temporary buffer if needed};
-        \item All processes quit the program at the same time : \textcolor{blue}{Try to balance the computing load of computing nodes};
+        \item All processes quit the program at the same time : \textcolor{blue}{Try to balance the computing load among computing nodes};
     \end{itemize}
 \end{frame}
 
-    \begin{frame}[fragile]{Disponible tools}
+    \begin{frame}[fragile]{Available tools}
 
         \begin{itemize}
             \item Program ethernet layers (for specialists only !);
-            \item Use dedicaced library (MPI, PVM, ...)
+            \item Use dedicated library (MPI, PVM, ...)
         \end{itemize}
 
-        In all cases, data exchanges messages must call explicitly, calling functions provided by the library;
+        In all cases, data exchange must be explicit, is done by calling functions provided by the library;
 
         Better to think his software in parallel at the beginning of the project.
     \end{frame}
