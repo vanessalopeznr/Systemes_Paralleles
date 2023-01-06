@@ -111,7 +111,7 @@ So, the best expected speedup is:
     S(n) = \frac{t_{s}}{f.t_{s}+\frac{(1-f)t_{s}}{n}} = \frac{n}{1+(n-1)f} \xrightarrow[n \to \infty]{} \frac{1}{f}
 \]
 
-This law is useful to find the maximal number of computing core to use for an application.
+This law is useful to find the maximal number of computing cores to use for an application.
 
 \begin{alertblock}{Limitation of the law}
     $f$ may change with the volume of input data and bigger input data may improve the speed-up.
@@ -129,8 +129,8 @@ This law is useful to find the maximal number of computing core to use for an ap
     \item {\scriptsize $t_{p} > 0$ the time to execute the parallel part of the code is linear relative of the volume of input data.}
     \item {\scriptsize Let's consider $t_{s}+t_{p} = 1$ (one unit of time)}.
 \end{itemize}
-\item Let's $t_{s}$ the time token by the execution of the sequential part of the code;
-\item Let's $t_{p}$ the time token by the execution of the parallel part of the code for a fixed amount of data.
+\item Let $t_{s}$ be the time taken by the execution of the sequential part of the code;
+\item Let $t_{p}$ be the time taken by the execution of the parallel part of the code for a fixed amount of data.
 \end{itemize}
 
 \[
@@ -141,11 +141,11 @@ This law is useful to find the maximal number of computing core to use for an ap
 
 \begin{frame}[fragile]{Scalability}
     \begin{block}{Definition}
-        For a parallel program, the behavior of the speed-up when we raises up the number of processes or/and the amount 
+        For a parallel program, \emph{scalability} is the behaviour of the speed-up when we raise up the number of processes or/and the amount 
         of input data. 
     \end{block}
 
-    \begin{exampleblock}{How evaluate the scalability ?}
+    \begin{exampleblock}{How to evaluate the scalability ?}
         \begin{itemize}
             \item Evaluate the worst speed-up : \textcolor{red}{For a global fixed amount of data}, draw the speed-up curve in function of the number of processes;
             \item Evaluate the best speed-up : \textcolor{DarkGreen}{For a fixed amount of data per process}, draw the speed-up curve in function of the number of processes;
@@ -162,14 +162,14 @@ This law is useful to find the maximal number of computing core to use for an ap
         \item Sending and receiving data is prohibitive :
         \begin{itemize}
             \item {\scriptsize \textcolor{red}{Initial cost of a message} : each message has an initial cost : set the connection, 
-                   get the same protocol, and so.\textcolor{blue}{This cost is constant.}} 
-            \item {\scriptsize \textcolor{blue}{Cost of the data transfer} : At last, the cost of the data flow is linear with the number
+                   get the same protocol, etc.\textcolor{blue}{This cost is constant.}} 
+            \item {\scriptsize \textcolor{blue}{Cost of the data transfer} : at last, the cost of the data flow is linear with the number
             of data to exchange}
-            \item {\scriptsize These costs are greater the cost of memory operations in RAM}
-            \item \textcolor{DarkGreen}{\scriptsize Better to copy some sparse data in a buffer and send the buffer than send data with multiple send and receives}
+            \item {\scriptsize These costs are greater than the cost of memory operations in RAM}
+            \item \textcolor{DarkGreen}{\scriptsize Better to copy some sparse data in a buffer and send the buffer, rather than send scattered data with multiple send and receives}
         \end{itemize}
         \item \textcolor{darkorange}{Try to minimize the number of data exchange between processes}
-        \item Greater is the ratio between number of computation instructions and messages to exchange, better will be your speed-up !
+        \item The greater the ratio between number of computation instructions and messages to exchange, the better will be your speed-up !
         \item \alert{Granularity can be improved with non blocking data exchanges}.
     \end{itemize}
 \end{frame}
@@ -177,24 +177,24 @@ This law is useful to find the maximal number of computing core to use for an ap
 \begin{frame}[fragile]{Load balancing}
     \scriptsize
     \begin{block}{Definition}
-        \textbf{All processes execute a computation section of the code in the same time};
+        \textbf{All processes execute a computation section of the code at the same time};
     \end{block}
 
     \begin{itemize}
         \item Great penalties in time occur if some parts of the code are far away from load balancing;
-        \item \textbf{Example 1} : A function in the code take $t$ seconds for the half of the processes, and $\frac{t}{2}$
+        \item \textbf{Example 1} : A function takes $t$ seconds for the half of the processes, and $\frac{t}{2}$
               for other processes. The maximal speed-up for this function will be :
             \[
-                S(n) = \frac{\frac{n}{2}t + \frac{n}{2}\frac{t}{2}}{t} = \frac{3n}{4}
+                S(n) = \frac{\frac{n}{2}t + \frac{n}{2}\frac{t}{2}}{t} = \frac{3}{4}n
             \]
-        \item \textbf{Example 2} : A function in the code takes $\frac{t}{2}$ seconds for $n-1$ processes, and $t$
+        \item \textbf{Example 2} : A function takes $\frac{t}{2}$ seconds for $n-1$ processes, and $t$
             for one process. The maximal speed-up for this function will be :
           \[
               S(n) = \frac{(n-1)\frac{t}{2} + t}{t} = \frac{n-1}{2} + 1 = \frac{n+1}{2}
           \]
   \end{itemize}
 
-  \textbf{Remark} : Greater is the time token to execute a  bad load balancing function, greater is the penalty. Don't worry
+  \textbf{Remark} : Greater is the time taken to execute a  bad load balancing function, greater is the penalty. Don't worry
   about load balancing for functions taking very small time to execute
 \end{frame}
 
@@ -214,8 +214,8 @@ This law is useful to find the maximal number of computing core to use for an ap
         \begin{itemize}
             \item In distributed parallel context, no data must be exchanged between processes to compute the results;
             \item In shared parallel environment, parallelization is straightforward, but beware to the memory bound computation;
-            \item In distributed environment, the memory bound limitation is not a trouble;
-            \item If data are contiguous and algorithm vectorizable, can be ideal on GPGPU for performance.
+            \item In distributed environment, the memory bound limitation is not an issue;
+            \item If data is contiguous and algorithm vectorizable, can be ideal on GPGPU for performance.
         \end{itemize}
     \end{exampleblock}
 \end{frame}
@@ -240,7 +240,7 @@ This law is useful to find the maximal number of computing core to use for an ap
     \begin{itemize}
         \item Memory access and computing operation have the same complexity : 
               \textbf{On shared memory, memory bound limits the performance}
-        \item On distributed memory, each process uses his own physical memory and none data must be 
+        \item On distributed memory, each process uses his own physical memory and no data must be 
               exchanged : Speed-up may be linear relative to the number of processes (if data
               intensity is enough)
     \end{itemize}
@@ -271,9 +271,9 @@ This law is useful to find the maximal number of computing core to use for an ap
     \begin{block}{\small Problematic}
         Close to the vector addition multiplication, but :
         \begin{itemize}
-            \item Dimensions of diagonal blocks are inhomogeneous \& for each diagonal 
+            \item Dimensions $d_i$ of diagonal blocks are inhomogeneous \& for each diagonal 
                   block, computation complexity : $d_{i}^{3}$.
-            \item How distribute diagonal blocks among processes to obtain nearly optimal load balancing ?
+            \item How to distribute diagonal blocks among processes to obtain nearly optimal load balancing ?
         \end{itemize}
     \end{block}
 \end{frame}
@@ -284,7 +284,7 @@ This law is useful to find the maximal number of computing core to use for an ap
 
     \begin{block}{Example of algorithm to distribute the diagonal blocks}
     \begin{itemize}
-        \item Sort diagonal blocks with dimension decreasing;
+        \item Sort diagonal blocks with decreasing dimension;
         \item Set "weight" to zero for each process
         \item Distribute biggest triplet blocks $A_{ii},B_{ii},C_{ii}$ among processes and add each $d_{i}$ in the weight of each process;
         \item While some diagonal blocks are not distributed :
@@ -295,8 +295,8 @@ This law is useful to find the maximal number of computing core to use for an ap
     \end{itemize}
     \end{block}
 
-    \textbf{Remark} : All processes compute the distribution of the diagonal blocks. It's better to do same computation for all processes
-                      than one computes and sends result to other processes.
+    \textbf{Remark} : All processes compute the distribution of the diagonal blocks. It is better to do same computation for all processes,
+                      than having process 0 compute the distribution and send it to other processes.
 
 \end{frame}
 
@@ -306,11 +306,11 @@ This law is useful to find the maximal number of computing core to use for an ap
     \[
         \left\{
         \begin{array}{l}
-            u_{0} \mbox{ choosen} \\
+            u_{0} \mbox{ chosen} \\
             u_{n+1} = \left\{
                 \begin{array}{l}
                     \frac{u_{n}}{2} \mbox{ if } u_{n}\mbox{ is even}\\[1mm]
-                    3.u_{n}+1 \mbox{ if } u_{n} \mbox{ is odd.}
+                    3.u_{n}+1 \mbox{ if } u_{n} \mbox{ is odd}
                 \end{array}
             \right.
         \end{array}
@@ -326,14 +326,14 @@ This law is useful to find the maximal number of computing core to use for an ap
     \end{itemize}
 \end{exampleblock}
 
-\begin{alertblock}{\small Some definition}
+\begin{alertblock}{\small Some definitions}
     \begin{itemize}
         \item \textcolor{blue}{\bf Length of flight} : number of iterations for a series to reach the value 1;
         \item \textcolor{NavyBlue}{\bf Height of the flight} : maximal value reached by a series
     \end{itemize}
 \end{alertblock}
-\begin{center}{\bf The goal of the program : } compute the length and the height of flight for lot of 
-    odd values for $u_{0}$
+\begin{center}{\bf The goal of the program : } compute the length and the height of flight for a lot of 
+    (odd) values of $u_{0}$
 \end{center}
 \end{frame}
 
@@ -343,9 +343,9 @@ This law is useful to find the maximal number of computing core to use for an ap
         \begin{itemize}
             \item Each process computes the length and the height for a subset of initial values $u_{0}$;
             \item The computation intensity depends of the length of each Syracuse series;
-            \item It's impossible to know a priori the computation complexity to compute the height and the length of a series
-            \item Use a dynamic algorithm on "root" process (the "master" process) to distribute series among other processes ("slaves")
+            \item It's impossible to know the computation complexity of a series, prior to computing it
         \end{itemize}
+        $\Rightarrow$ Use a dynamic algorithm on "root" process (the "master" process) to distribute series among other processes ("slaves")
     \end{block}
 
     \begin{multicols}{2}
@@ -355,10 +355,9 @@ This law is useful to find the maximal number of computing core to use for an ap
                 \item While(some pack of series to send) do 
                 \item \hspace*{2mm}Wait slave asking series and send next pack;
                 \item end While
-                \item Send termination id to all slave processes;
+                \item Send termination order to all slave processes;
             \end{itemize}
         \end{exampleblock}
-    
 
         \begin{exampleblock}{\small Slave's Algorithm}
             \begin{itemize}
@@ -378,12 +377,12 @@ This law is useful to find the maximal number of computing core to use for an ap
 \begin{frame}[fragile]{Nearly embarrassingly parallel algorithm}
     \scriptsize
     \begin{block}{\small Definition}
-        Independent computation for each processes with a final communication to finalize the computation.
+        Independent computation for each process with a final communication to finalize the computation.
     \end{block}
 
     \begin{exampleblock}{\small Examples}
         \begin{itemize}
-            \item Dot product of two vector in $\mathbb{R}^{n}$;
+            \item Dot product of two vectors in $\mathbb{R}^{n}$;
             \item Compute an integral;
             \item Matrix-vector product;
         \end{itemize}
@@ -406,11 +405,11 @@ This law is useful to find the maximal number of computing core to use for an ap
       \[
       \int_{a}^{b}f(x)dx \approx \sum_{i=1}^{Ng} \omega_{i}f(g_{i})
       \]
-      where $\omega_{i}\in\mathbb{R}$ the weights  and $g_{i}\in\mathbb{R}$ integrals points.
+      where $\omega_{i}\in\mathbb{R}$ are the weights  and $g_{i}\in\mathbb{R}$ the integration points.
     \item In fact, Gauss quadrature are given on $[-1;1]$ interval : some variable modification to do in the integral !;
     \item $\left\{ g_{1}=0, \omega_{1}=2 \right\}$ : Order 1 Legendre Gauss quadrature;
     \item $\left\{ \left( g_{1}=-\frac{\sqrt{2}}{2}, \omega_{1}=\frac{5}{9} \right), \left( g_{2}=0, \omega_{2}=\frac{8}{9} \right), \left( g_{3}=+\frac{\sqrt{2}}{2}, \omega_{3}=\frac{5}{9} \right) \right\}$ : Order 3 Legendre Gauss quadrature
-    \item \textbf{Remark} : Order $n$ means than quadrature compute the exact value of the integral for polynomials of degree lesser or equal to $n$.
+    \item \textbf{Remark} : Order $n$ means that the quadrature computes the exact value of the integral for polynomials of degree less or equal to $n$.
     \item To compute better approximation of the integral, we subdivide the interval in several smaller intervals
     \end{itemize}
   \end{block}
@@ -420,7 +419,7 @@ This law is useful to find the maximal number of computing core to use for an ap
   \scriptsize
   \begin{center}
     \[
-    I = \int_{a}^{b}f(x)dx = \sum_{i=1}^{N}\int_{a_{i}}^{b_{i}}f(x)dx = \sum_{i=1}^{N} I_{î} \mbox{ where } a_{1}=a, b_{N} = b\mbox{ and } a_{i} < b_{i} < a_{i+1}
+    I = \int_{a}^{b}f(x)dx = \sum_{i=1}^{N}\int_{a_{i}}^{b_{i}}f(x)dx = \sum_{i=1}^{N} I_{i} \mbox{ where } a_{1}=a, b_{N} = b\mbox{ and } a_{i} < b_{i} < a_{i+1}
     \]
   \end{center}
   \begin{block}{\small Main ideas}
@@ -437,7 +436,7 @@ This law is useful to find the maximal number of computing core to use for an ap
 
 \begin{frame}[fragile]{Matrix-vector product}
   \scriptsize
-  Let's a matrix $A\in\mathbb{R}^{m\times n}$ and a vector $u\in\mathbb{R}^{m}$.
+  Let $A\in\mathbb{R}^{n\times m}$ be a matrix and $u\in\mathbb{R}^{m}$ a vector.
 
   The goal of this algorithm is to compute the matrix-vector product :
   \[
@@ -446,8 +445,8 @@ This law is useful to find the maximal number of computing core to use for an ap
   
   Two possibilities to parallelize this algorithm :
   \begin{itemize}
-  \item Partitioning the matrix per block of rows :
-  \item Partitioning the matrix per block of columns and the vector $u$ per block of same size.
+  \item Partitioning the matrix by block of rows :
+  \item Partitioning the matrix by block of columns and the vector $u$ by block of same size.
   \end{itemize}
 
   The goal is to split the computation between processes and use a global communication operation
@@ -455,9 +454,9 @@ This law is useful to find the maximal number of computing core to use for an ap
 
 \end{frame}
 
-\begin{frame}[fragile]{Matrix-vector product per rows splitting}
+\begin{frame}[fragile]{Matrix-vector product by rows splitting}
   \scriptsize
-  Let's
+  Let
   \[
   A = \left(\begin{array}{c}
     A_{1} \\ \hline
@@ -473,7 +472,8 @@ This law is useful to find the maximal number of computing core to use for an ap
 
     \begin{exampleblock}{Algorithm}
       \begin{itemize}
-      \item Each process computes a part of $v$. The process $I$ computes 
+      \item Each process has some rows of $A$ and all of $u$
+      \item Each process computes a part of $v$: the process $I$ computes 
         $\displaystyle
         V_{I} = A_{I}.u \in \mathbb{R}^{\frac{n}{N}}
         $ 
@@ -484,9 +484,9 @@ This law is useful to find the maximal number of computing core to use for an ap
   
 \end{frame}
 
-\begin{frame}[fragile]{Matrix-vector product per columns splitting}
+\begin{frame}[fragile]{Matrix-vector product by columns splitting}
   \scriptsize
-  Let's
+  Let
   \[
     A = \left(A_{1}|A_{2}|\ldots|A_{I}|\ldots|A_{N}\right)\mbox{ and }
     u=\left(\begin{array}{c}
@@ -502,6 +502,7 @@ This law is useful to find the maximal number of computing core to use for an ap
 
     \begin{exampleblock}{Algorithm}
       \begin{itemize}
+      \item Each process has some columns of $A$ and some rows of $u$
       \item Each process computes a partial sum for $v$. Process $I$ computes
         \[
         V_{I} = A_{I}.U_{I}\in\mathbb{R}^{n}
@@ -530,16 +531,16 @@ This law is useful to find the maximal number of computing core to use for an ap
   \begin{figure}[h]
     \includegraphics[width=0.3\linewidth]{../Images/mandelbrot.jpeg}
     \includegraphics[width=0.2\linewidth]{../Images/bhudda.jpg}
-    \caption{\small Mandelbrot (left) and Buddha's (right) set}
+    \caption{\small Mandelbrot (left) and Buddha (right) set}
   \end{figure}
   \end{multicols}
 
   \begin{multicols}{2}
   \begin{block}{\small Property}
   \begin{itemize}
-  \item Series divergent if $\exists n>0; |z_{n}|>2$;
+  \item Series is divergent if $\exists n>0; |z_{n}|>2$;
   \item Region of interest : the disk $\mathcal{D}$ of radius 2;
-  \item In some region of the disk, possible to prove the convergence;
+  \item In some region of the disk, possible to prove convergence;
   \item But chaotic convergence behaviour in some region of $\mathcal{D}$ !
   \end{itemize}
   \end{block}
@@ -565,7 +566,7 @@ This law is useful to find the maximal number of computing core to use for an ap
     \begin{alertblock}{Parallelization of the algorithm}
         \begin{itemize}
             \item Master-slave algorithm to ensure load balancing;
-            \item For granularity, one define a task as a pack of random values $c$;
+            \item For granularity, define a task as a pack of random values $c$;
         \end{itemize}
     \end{alertblock}
 \end{frame}
