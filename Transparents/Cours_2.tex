@@ -72,7 +72,7 @@
 \begin{frame}{Speed-up}
     \scriptsize
     \begin{block}{Definition}
-        Let's
+        Let
         \begin{itemize}
         \item $t_{s}$ : Sequential execution time
         \item $t_{p}(n)$ : Execution time on $n$ computing units;
@@ -85,8 +85,8 @@
     \end{block}
         
     \begin{alertblock}{Remark}
-        The sequential algorithm is often different as parallel algorithm. In this case,
-        speed-up measure is not obvious. In particular, following questions must be 
+        The sequential algorithm is often different from the parallel algorithm. In this case,
+        speed-up measure is not obvious. In particular, the following questions must be 
         asked among other questions :
         \begin{itemize}
             \item Is the sequential algorithm optimal in complexity ?
@@ -102,11 +102,11 @@
 \begin{center}\textcolor{DarkGreen}{\large Give a limit for the speed-up}\end{center}
 
 \begin{itemize}
-\item Let's $t_{s}$ the time running the code in sequential
-\item Let's $f$ the part (in percent) of $t_{s}$, relative to a part of the code which \textcolor{orange}{can't be parallelized} 
+\item Let $t_{s}$ be the time necessary to run the code in sequential
+\item Let $f$ be the fraction of $t_{s}$, relative to the part of the code which \textcolor{orange}{can't be parallelized}
 \end{itemize}
 
-So
+So, the best expected speedup is:
 \[
     S(n) = \frac{t_{s}}{f.t_{s}+\frac{(1-f)t_{s}}{n}} = \frac{n}{1+(n-1)f} \xrightarrow[n \to \infty]{} \frac{1}{f}
 \]
@@ -114,7 +114,7 @@ So
 This law is useful to find the maximal number of computing core to use for an application.
 
 \begin{alertblock}{Limitation of the law}
-    $f$ may change with the volume of input data and bigger input data improve the speed-up.
+    $f$ may change with the volume of input data and bigger input data may improve the speed-up.
 \end{alertblock}
 \end{frame}
 
@@ -125,7 +125,7 @@ This law is useful to find the maximal number of computing core to use for an ap
 \begin{itemize}
 \item \textbf{Hypotheses} : 
 \begin{itemize}
-    \item {\scriptsize $t_{s}\geq 0$ the time to execute the sequential part of the code is indenpendant of the volume of input data;}
+    \item {\scriptsize $t_{s}\geq 0$ the time to execute the sequential part of the code is independent of the volume of input data;}
     \item {\scriptsize $t_{p} > 0$ the time to execute the parallel part of the code is linear relative of the volume of input data.}
     \item {\scriptsize Let's consider $t_{s}+t_{p} = 1$ (one unit of time)}.
 \end{itemize}
@@ -141,7 +141,7 @@ This law is useful to find the maximal number of computing core to use for an ap
 
 \begin{frame}[fragile]{Scalability}
     \begin{block}{Definition}
-        For a parallel program, the behavious of the speed-up when we raises up the number of processes or/and the amount 
+        For a parallel program, the behavior of the speed-up when we raises up the number of processes or/and the amount 
         of input data. 
     \end{block}
 
@@ -181,7 +181,7 @@ This law is useful to find the maximal number of computing core to use for an ap
     \end{block}
 
     \begin{itemize}
-        \item Great penalities in time occure if some parts of the code are far away from load balancing;
+        \item Great penalties in time occur if some parts of the code are far away from load balancing;
         \item \textbf{Example 1} : A function in the code take $t$ seconds for the half of the processes, and $\frac{t}{2}$
               for other processes. The maximal speed-up for this function will be :
             \[
@@ -194,7 +194,7 @@ This law is useful to find the maximal number of computing core to use for an ap
           \]
   \end{itemize}
 
-  \textbf{Remark} : Greater is the time token to execute a  bad load balancing function, greater is the penality. Don't worry
+  \textbf{Remark} : Greater is the time token to execute a  bad load balancing function, greater is the penalty. Don't worry
   about load balancing for functions taking very small time to execute
 \end{frame}
 
@@ -204,7 +204,7 @@ This law is useful to find the maximal number of computing core to use for an ap
     \scriptsize
     \begin{block}{Embarrassingly parallel algorithm}
         \begin{itemize}
-            \item Each data used and computed are independant;
+            \item Each data used and computed are independent;
             \item No data race in multithread context;
             \item No communication between processes in distributed environment
         \end{itemize}
@@ -266,7 +266,7 @@ This law is useful to find the maximal number of computing core to use for an ap
                       0 & \ldots & 0 & B_{nn} 
                 \end{array}\right).
         \]
-    where $d_{i} = \mbox{dim}(A_{ii}) = \mbox{dim}(B_{ii})$ ($n$ independant matrix-matrix multiplications)
+    where $d_{i} = \mbox{dim}(A_{ii}) = \mbox{dim}(B_{ii})$ ($n$ independent matrix-matrix multiplications)
 
     \begin{block}{\small Problematic}
         Close to the vector addition multiplication, but :
@@ -302,7 +302,7 @@ This law is useful to find the maximal number of computing core to use for an ap
 
 \begin{frame}[fragile]{Third example : Syracuse series (1)}
 \scriptsize 
-\begin{block}{\small Definition of syracuse serie}
+\begin{block}{\small Definition of Syracuse series}
     \[
         \left\{
         \begin{array}{l}
@@ -318,18 +318,18 @@ This law is useful to find the maximal number of computing core to use for an ap
     \]
 \end{block}
 
-\begin{exampleblock}{\small Property of syracuse serie}
+\begin{exampleblock}{\small Property of Syracuse series}
     \begin{itemize}
         \item One cycle exists : $1 \rightarrow 4 \rightarrow 2 \rightarrow 1 \rightarrow \cdots$
         \item A conjecture : \alert{$\forall u_{0}\in \mathbb{N}$, 
-              the serie reaches the cycle above in a finite number of iterations}
+              the series reaches the cycle above in a finite number of iterations}
     \end{itemize}
 \end{exampleblock}
 
 \begin{alertblock}{\small Some definition}
     \begin{itemize}
-        \item \textcolor{blue}{\bf Length of flight} : number of iterations for a serie to reach the value 1;
-        \item \textcolor{NavyBlue}{\bf Height of the flight} : maximal value reached by a serie
+        \item \textcolor{blue}{\bf Length of flight} : number of iterations for a series to reach the value 1;
+        \item \textcolor{NavyBlue}{\bf Height of the flight} : maximal value reached by a series
     \end{itemize}
 \end{alertblock}
 \begin{center}{\bf The goal of the program : } compute the length and the height of flight for lot of 
@@ -342,9 +342,9 @@ This law is useful to find the maximal number of computing core to use for an ap
     \begin{block}{\small Problematic}
         \begin{itemize}
             \item Each process computes the length and the height for a subset of initial values $u_{0}$;
-            \item The computation intensity depends of the length of each syracuse serie;
-            \item It's impossible to know a priori the computation complexity to compute the height and the length of a serie
-            \item Use a dynamic algorithm on "root" process (the "master" process) to distribute serie among other processes ("slaves")
+            \item The computation intensity depends of the length of each Syracuse series;
+            \item It's impossible to know a priori the computation complexity to compute the height and the length of a series
+            \item Use a dynamic algorithm on "root" process (the "master" process) to distribute series among other processes ("slaves")
         \end{itemize}
     \end{block}
 
@@ -355,7 +355,7 @@ This law is useful to find the maximal number of computing core to use for an ap
                 \item While(some pack of series to send) do 
                 \item \hspace*{2mm}Wait slave asking series and send next pack;
                 \item end While
-                \item Send terminaison id to all slave processes;
+                \item Send termination id to all slave processes;
             \end{itemize}
         \end{exampleblock}
     
@@ -363,7 +363,7 @@ This law is useful to find the maximal number of computing core to use for an ap
         \begin{exampleblock}{\small Slave's Algorithm}
             \begin{itemize}
                 \item While (receive some series to compute in a pack)
-                \item \hspace*{2mm}Compute each serie of the pack;
+                \item \hspace*{2mm}Compute each series of the pack;
                 \item end While
             \end{itemize}
         \end{exampleblock}
@@ -373,12 +373,12 @@ This law is useful to find the maximal number of computing core to use for an ap
 
 \end{frame}
 
-\section{Nearly embarrasingly parallel algorithm}
+\section{Nearly embarrassingly parallel algorithm}
 
-\begin{frame}[fragile]{Nearly embarrasingly parallel algorithm}
+\begin{frame}[fragile]{Nearly embarrassingly parallel algorithm}
     \scriptsize
     \begin{block}{\small Definition}
-        Independant computation for each processes with a final communication to finalize the computation.
+        Independent computation for each processes with a final communication to finalize the computation.
     \end{block}
 
     \begin{exampleblock}{\small Examples}
@@ -389,7 +389,7 @@ This law is useful to find the maximal number of computing core to use for an ap
         \end{itemize}
     \end{exampleblock}
 
-    \begin{alertblock}{\small Non embarrasingly parallel algorithm examples}
+    \begin{alertblock}{\small Non embarrassingly parallel algorithm examples}
       \begin{itemize}
       \item Parallel sort algorithms;
       \item Matrix-matrix product;
@@ -410,7 +410,7 @@ This law is useful to find the maximal number of computing core to use for an ap
     \item In fact, Gauss quadrature are given on $[-1;1]$ interval : some variable modification to do in the integral !;
     \item $\left\{ g_{1}=0, \omega_{1}=2 \right\}$ : Order 1 Legendre Gauss quadrature;
     \item $\left\{ \left( g_{1}=-\frac{\sqrt{2}}{2}, \omega_{1}=\frac{5}{9} \right), \left( g_{2}=0, \omega_{2}=\frac{8}{9} \right), \left( g_{3}=+\frac{\sqrt{2}}{2}, \omega_{3}=\frac{5}{9} \right) \right\}$ : Order 3 Legendre Gauss quadrature
-    \item \textbf{Remark} : Order $n$ means than quadrature compute the exact value of the integral for polynoms of degree lesser or equal to $n$.
+    \item \textbf{Remark} : Order $n$ means than quadrature compute the exact value of the integral for polynomials of degree lesser or equal to $n$.
     \item To compute better approximation of the integral, we subdivide the interval in several smaller intervals
     \end{itemize}
   \end{block}
@@ -444,10 +444,10 @@ This law is useful to find the maximal number of computing core to use for an ap
   v = A.u\in\mathbb{R}^{n}\mbox{ where } v_{i} = \sum_{j=1}^{m} A_{ij}.u_{j}
   \]
   
-  Two possibilities to parallize this algorithm :
+  Two possibilities to parallelize this algorithm :
   \begin{itemize}
-  \item Partitionning the matrix per block of rows :
-  \item Partitionning the matrix per block of columns and the vector $u$ per block of same size.
+  \item Partitioning the matrix per block of rows :
+  \item Partitioning the matrix per block of columns and the vector $u$ per block of same size.
   \end{itemize}
 
   The goal is to split the computation between processes and use a global communication operation
@@ -502,11 +502,11 @@ This law is useful to find the maximal number of computing core to use for an ap
 
     \begin{exampleblock}{Algorithm}
       \begin{itemize}
-      \item Each process computes a partial sum for $v$. Processus $I$ computes
+      \item Each process computes a partial sum for $v$. Process $I$ computes
         \[
         V_{I} = A_{I}.U_{I}\in\mathbb{R}^{n}
         \]
-      \item Finnaly, a sum reduction is done to get the final result :
+      \item Finally, a sum reduction is done to get the final result :
         $\displaystyle
         v = \sum_{I=1}^{N}V_{I}
         $
@@ -515,10 +515,10 @@ This law is useful to find the maximal number of computing core to use for an ap
     
 \end{frame}
 
-\begin{frame}[fragile]{Bhudda set}
+\begin{frame}[fragile]{Buddha set}
   \scriptsize
   \begin{multicols}{2}
-  Let's consider the complex recursive mandelbrot serie :
+  Let's consider the complex recursive Mandelbrot series :
   \[
   \left\{
   \begin{array}{l}
@@ -530,34 +530,34 @@ This law is useful to find the maximal number of computing core to use for an ap
   \begin{figure}[h]
     \includegraphics[width=0.3\linewidth]{../Images/mandelbrot.jpeg}
     \includegraphics[width=0.2\linewidth]{../Images/bhudda.jpg}
-    \caption{\small Mandelbrot (left) and Bhudda's (right) set}
+    \caption{\small Mandelbrot (left) and Buddha's (right) set}
   \end{figure}
   \end{multicols}
 
   \begin{multicols}{2}
   \begin{block}{\small Property}
   \begin{itemize}
-  \item Serie divergent if $\exists n>0; |z_{n}|>2$;
+  \item Series divergent if $\exists n>0; |z_{n}|>2$;
   \item Region of interest : the disk $\mathcal{D}$ of radius 2;
   \item In some region of the disk, possible to prove the convergence;
   \item But chaotic convergence behaviour in some region of $\mathcal{D}$ !
   \end{itemize}
   \end{block}
 
-  \begin{exampleblock}{\small Mandelbrot and bhudda sets}
+  \begin{exampleblock}{\small Mandelbrot and Buddha sets}
     \begin{itemize}
     \item \textcolor{blue}{Mandelbrot's set} : \\ color $c$ with  "divergence speed" of relative series
-    \item \textcolor{DarkGreen}{Bhudda's set} : \\ Color  orbit of divergent series
+    \item \textcolor{DarkGreen}{Buddha's set} : \\ Color  orbit of divergent series
     \end{itemize}
   \end{exampleblock}
   \end{multicols}
 \end{frame}
 
-\begin{frame}[fragile]{Bhudda's set algorithm}
+\begin{frame}[fragile]{Buddha's set algorithm}
     \begin{exampleblock}{Algorithm}
         \begin{itemize}
             \item Draw $N$ random values of $c$ in the disk $\mathcal{D}$ where the relative series diverge;
-            \item Compute the orbit of this serie until divergence and increment the intensity of the pixel
+            \item Compute the orbit of this series until divergence and increment the intensity of the pixel
                   representing each value of the orbit;            
         \end{itemize}
     \end{exampleblock}
