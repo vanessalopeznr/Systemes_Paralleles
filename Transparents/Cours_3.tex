@@ -94,12 +94,12 @@
   \scriptsize
   \begin{block}{Basic operations}
     \begin{itemize}
-    \item \textbf{Compare algorithm} : Comparaison algorithm complexity is supposed $\mathcal{O}(1)$. But in distributed parallel context, one must consider the distribution of the initial data
-      to insert the cost of data exchange between processes !
+    \item \textbf{Compare algorithm} : Comparison algorithm complexity is supposed $\mathcal{O}(1)$. But in distributed parallel context, one must consider the distribution of the initial data
+      to account for the cost of data exchange between processes !
     \item  \textbf{Exchange algorithm} : Exchange algorithm complexity is supposed $\mathcal{O}(1)$. But same consideration to do as \textbf{compare algorithm};
     \item Sequential ``compare--and--exchange'' algorithm:
 \begin{minted}{C++}
-if (a>b) { // Comparaison
+if (a>b) { // Comparison
   // Exchange
   tmp = a;
   a   = b;
@@ -179,12 +179,12 @@ if (a>b) { // Comparaison
 \begin{itemize}
 \item Best sequential sorting algorithms ( for arbitrary sequences of numbers )
   have average time complexity $O(n\log n)$
-\item hence, the best speedup one can except from using $n$ processors is
+\item hence, the best speedup one can expect from using $n$ processors is
 $
 \frac{O\left(n\log n\right)}{n} = O(\log n)
 $
 \item there are such parallel algorithms, but the hidden constant is very large ( F. Thomson Leighton : Introduction to parallel algorithms and architectures (1991) )
-\item Generally, a pratical useful $O(\log n)$ algorithm may be difficult to find.
+\item In general, a practical useful $O(\log n)$ algorithm may be difficult to find.
 \end{itemize}
 \end{multicols}
 
@@ -219,15 +219,15 @@ for ( i = 0; i < n; i++ ) {// For each value
     \end{center}
   \end{exampleblock}
 
-  Work well if there are no repetitions of the numbers in the list ( in the case
-  of repetitions one has to change slightly the code ).
+  Works well if there are no repetitions of the numbers in the list (in case
+  of repetitions the code must be changed slightly).
 
 \end{frame}
 
 
 \begin{frame}[fragile]{Rank sort : Parallel code}
   \scriptsize
-  \begin{exampleblock}{Embarrasingly ``ideal'' algorithm} 
+  \begin{exampleblock}{Embarrassingly ``ideal'' algorithm} 
     Parallel code, using $n$ processes ( for $n$ values to sort )
 
     \begin{center}
@@ -291,7 +291,7 @@ b[x] = a[rank];
 
       ( but, as one expects, processor efficiency
       is very low )\\[2mm]
-      There are just theorical results : it is not efficient to use $n$ or $n^{2}$
+      These are just theoretical results : it is not efficient to use $n$ or $n^{2}$
       processors to sort $n$ numbers.
       \end{multicols}
       
@@ -299,7 +299,7 @@ b[x] = a[rank];
   \end{block}
 \end{frame}
 
-\begin{frame}[fragile]{Data partitionning}
+\begin{frame}[fragile]{Data partitioning}
   \scriptsize
   \begin{block}{\small Context}
     \begin{itemize}
@@ -332,15 +332,15 @@ b[x] = a[rank];
     \begin{itemize}
     \item Process $p_{i}$ sends local value $A$ to process $p_{j}$;
     \item Process $p_{j}$ compares value $A$ with some local values $B_{j}$;
-    \item Send the $B_{j}$ which are larger (or lesser) than $A$. If none $B_{j}$ is larger (or lesser) than $A$, sends back $A$;
+    \item Send the $B_{j}$ which are larger (or lesser) than $A$. If no $B_{j}$ is larger (or lesser) than $A$, send back $A$;
     \end{itemize}
   \end{block}
 
   \begin{block}{\small Symmetric algorithm}
     \begin{itemize}
-    \item Processes $p_{i}$ and $p_{j}$ sends some value to the other;
+    \item Processes $p_{i}$ and $p_{j}$ send some value to the other;
     \item Each process compares his value with the received value;
-    \item Each process keeps his value or the received value relative to the comparaison result;
+    \item Each process keeps his value or the received value relative to the comparison result;
     \end{itemize}
   \end{block}
 
@@ -348,7 +348,7 @@ b[x] = a[rank];
   \begin{alertblock}{\small Remarks}
     \begin{itemize}
     \item Data exchanges between processes is very expensive, so find some algorithms which minimize data exchanges;
-    \item Generally, the receive operation doesn't know the number of values to receive $\Rightarrow$ one must probe the
+    \item In general, the receive operation doesn't know the number of values to receive $\Rightarrow$ one must probe the
           received message to get the number of data to receive, allocate the relative buffer and receive the data !
     \end{itemize}
   \end{alertblock}
@@ -414,7 +414,7 @@ b[x] = a[rank];
   \begin{multicols}{2}
   \begin{block}{Bubble sort algorithm}
     \begin{itemize}
-    \item Simplest, but not so efficient sequential sorting algorithm;
+    \item Simplest, but not an efficient sequential sorting algorithm;
     \item Compare/exchange complexity :\\
       $\displaystyle
       \sum_{i=1}^{n-1}i = \frac{n(n-1)}{2} = O(n^{2})
@@ -549,7 +549,7 @@ Step & $P_{0}$ & & $P_{1}$ & & $P_{2}$ & & $P_{3}$ & & $P_{4}$ &
     \item Replace a value per process with a sorted \\
           set of values per process
     \item Use sort-fusion algorithm to exchange values
-    \item Data comparaison complexity : \\
+    \item Data comparison complexity : \\
       $
       \frac{N}{nbp}\log_{2}\left(\frac{N}{nbp}\right) +
       (nbp-1).\frac{2N}{nbp}
@@ -564,16 +564,16 @@ Step & $P_{0}$ & & $P_{1}$ & & $P_{2}$ & & $P_{3}$ & & $P_{4}$ &
   \begin{exampleblock}{\small Implementation}
     \begin{minted}{C++}
 sort(values);// Quick sort of local values
-for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
-  if (it is odd) {
+for (iter=0; iter<nbp-1; ++iter) {// Odd-even algorithm
+  if (iter is odd) {
     if (rank is even and rank > 0) {
-      receive(buffer, rank-1); send(values, rank-1);
+      recv(buffer, rank-1); send(values, rank-1);
       values = fusionSort(buffer, values, keepMax);
     } else if (rank is odd and rank < nbp-1) {
       send(values, rank+1); recv(buffer, rank+1);
       values = fusionSort(buffer, values, keepMin);
     }
-  } else if (it is even) {
+  } else if (iter is even) {
     if (rank is even and rank < nbp-1) {
       recv(buffer, rank+1); send(values, rank+1);
       values = fusionSort(buffer, values, keepMin);
@@ -597,7 +597,7 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
     \item Look at the array as a two-dimensional array (one row per process)
     \item The goal is to sort this 2D array in snakelike style : even rows increasing, odd rows decreasing;
     \item Two phases : In \textbf{even phase}, sort per row,
-      in {odd phase,}, sort per column increasing from top to bottom;
+      in \textbf{odd phase}, sort per column increasing from top to bottom;
     \item After $\log_{2}(N)+1$ phases, the array is snakelike-style sorted.
     \end{itemize}
   \end{block}
@@ -655,11 +655,11 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
 {\small\color{blue} Final 5 : row sort} }
   \end{exampleblock}
 
-  \begin{alertblock}{Remarques}
+  \begin{alertblock}{Remarks}
 \begin{itemize}
     \item Embarrassingly parallel algorithm for shared memory !
     \item But not well adapted for distributed parallel architecture as is;
-    \item How change this algorithm for distributed parallel architecture ?
+    \item How to change this algorithm for distributed parallel architecture ?
 \end{itemize}
   \end{alertblock}
 \end{multicols}
@@ -707,7 +707,7 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
         \begin{itemize}
             \item Use \verb@MPI_Comm_split(comm,color,key,&newcomm)@ to define row and columns communicators;
             \item Processes calling this function with same color are inside the same new communicator;
-            \item key is a value to numbering the processes inside the new communicator.
+            \item key is a value to number the processes inside the new communicator.
         \end{itemize}
     \end{minipage}
 \end{multicols}
@@ -723,7 +723,7 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
             \item Optimal sequential sorting algorithm ($\mathcal{O}(n\log_{2}(n))$) based on divide-and-conquer algorithm class;
             \item Select a number $r$ called \alert{pivot} and split the list into two sublists : one with all elements at most equal
                   to $r$, the other holding all elements greater than $r$;
-            \item This procedure is recursive, applied till one element lists are obtained (which are sorted)
+            \item This procedure is recursive, applied until one element lists are obtained (which are sorted)
             \item \textcolor{DarkGreen}{\bf \underline{Example }: }
             \only<1> {
             \begin{center}
@@ -795,14 +795,14 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
     \scriptsize
     \begin{block}{Ideas}
         \begin{itemize}
-            \item The class of quick-sort algortihm suggests to apply a divide-and-conquer parallelization method;
+            \item The class of quick-sort algorithm suggests to apply a divide-and-conquer parallelization method;
             \item The main problem of this approach is that the tree distribution ( induced by the lengths of the sublists)
                   heavily depends on pivot selection; in the worst case, the tree may consists of a single path (as a list);
-            \item \textcolor{blue}{\bf Analysis} : provided an equal distribution of values within sublists is assured, one gets :
+            \item \textcolor{blue}{\bf Analysis} : provided an equal distribution of values within sublists is ensured, one gets :
             \begin{itemize}
-                \item {\scriptsize Comparaisons : $\displaystyle n + \frac{n}{2} + \frac{n}{4} + \cdots \approx 2n$}
+                \item {\scriptsize Comparisons : $\displaystyle n + \frac{n}{2} + \frac{n}{4} + \cdots \approx 2n$}
                 \item {\scriptsize Communications : $t_{s} + \frac{n}{2}t_{d} + t_{s} + \frac{n}{4}t_{d} + \cdots \approx \log_{2}(n)t_{s} + nt_{d}$ where $t_{s}$ is time to start a communication
-                      and $t_{d}$ the time to transfert one element to another process.}
+                      and $t_{d}$ the time to transfer one element to another process.}
             \end{itemize}
             \item But only last iteration uses full parallelization !
         \end{itemize}
@@ -897,7 +897,7 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
 \begin{itemize}
     \item The binary numbers of two linked nodes have a difference of one bit;
     \item The distance between two nodes in a hypercube ( minimal number of nodes to access to go from
-          first node to second node ) is the number of bit which differe in their binary number;
+          first node to second node ) is the number of bit which differ in their binary number;
     \item It's the \textbf{Gray code} numbering.
 \end{itemize}        
 \end{block}
@@ -907,9 +907,9 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
         \item Initially, Data are distributed across all processes;
         \item Each process sorts its local data;
         \item Loop on dimension of the hypercube and for dimension $d$, consider pair of processes $\left(p;p+2^{d}\right)$
-        \item Process $p$ choose his median value as pivot and send value lesser than pivot to process $p+2^{d}$;
-        \item Process $p+2^{d}$ receive pivot and data from process $p$ and keep value greater than pivot;
-        \item Each process keep sorted value, using fusion sort algorithm to keep sorting.
+        \item Process $p$ chooses his median value as pivot and sends value lesser than pivot to process $p+2^{d}$;
+        \item Process $p+2^{d}$ receives pivot and data from process $p$ and keeps value greater than pivot;
+        \item Each process keeps sorted value, using fusion sort algorithm to keep sorting.
     \end{itemize}
 \end{exampleblock}
 \end{frame}
@@ -998,21 +998,21 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
     \begin{itemize}
         \item Suppose we run algorithm on $nbp=2^{d}$ processes (hypercube dimension $d$);
         \item Each process holds initially $Nl=\frac{N}{nbp}$ values;
-        \item \textbf{Initial sorting : } $Nl.\log_{2}(Nl)$ comparaisons;
+        \item \textbf{Initial sorting : } $Nl.\log_{2}(Nl)$ comparisons;
         \item \textbf{Pivot selection : } $\mathcal{O}(1)$ (one takes middle list element) for each dimension;
         \item \textbf{Pivot broadcasting : }
         \begin{itemize}
             \item {\scriptsize Broadcast one pivot in a $k$ hypercube :  $k(t_{s}+t_{d})$;}
-            \item {\scriptsize For all iterations : $(d+\cdots+1)(t_{s}+t_{d}) = \frac{d(d-1)}{2}(t_{s}+t_{d})$ compaisons;}
+            \item {\scriptsize For all iterations : $(d+\cdots+1)(t_{s}+t_{d}) = \frac{d(d-1)}{2}(t_{s}+t_{d})$ comparisons;}
         \end{itemize}
-        \item \textbf{Split list from pivot value : } For sorted list of size $x$, $\log_{2}(x)$ comparaisons;
+        \item \textbf{Split list from pivot value : } For sorted list of size $x$, $\log_{2}(x)$ comparisons;
         \item \textbf{Exchange part of list : } To exchange $\frac{x}{2}$ data : $2(t_{s}+\frac{x}{2}t_{d})$
-        \item \textbf{Fusion merge sort : } $\frac{x}{2}$ comparaisons
+        \item \textbf{Fusion merge sort : } $\frac{x}{2}$ comparisons
     \end{itemize}
 
     \begin{alertblock}{\small Total (for ideal balance)}
         \begin{itemize}
-            \item $N_{l}.\log_{2}(N_{l})+\left(\log_{2}(N_{l}) + \frac{N_{l}}{2}\right).d$ comparaisons
+            \item $N_{l}.\log_{2}(N_{l})+\left(\log_{2}(N_{l}) + \frac{N_{l}}{2}\right).d$ comparisons
             \item $\left(\frac{d(d-1)}{2}+2d\right)t_{s} + \left(\frac{d(d-1)}{2}+d.N_{l}\right).t_{d}$ for message;
         \end{itemize}
     \end{alertblock}
@@ -1024,7 +1024,7 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
     \scriptsize
     \begin{alertblock}{\small Definition of a bitonic sequence}
         \begin{itemize}
-        \item A sequence of values $\left\{a_{i}\right\}_{i\in[1;N]}$ would can split in two subsequences (of consecutive numbers), one increasing and one decreasing; e.g :
+        \item A sequence of values $\left\{a_{i}\right\}_{i\in[1;N]}$ than can be split in two subsequences (of consecutive numbers), one increasing and one decreasing; e.g :
         \[
             \exists i\in\left[1;N\right] \mbox{ verifying } 
             \left\{
@@ -1036,7 +1036,7 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
         \]
         \underline{\textcolor{blue}{Example}} : 3, 5, 8, \textcolor{orange}{\textbf{19}}, 17, 14, 12, 11
 
-        \item \textbf{Or} a sequence which may be brought to such this form by a circular shifting of the elements of the sequence \\[2mm]
+        \item \textbf{Or} a sequence which may be brought to this form by a circular shifting of the elements of the sequence \\[2mm]
         \underline{\textcolor{blue}{Example}} : \textcolor{blue}{12, 11}, 3, 5, 8, \textcolor{orange}{\textbf{19}}, 17, 14
         \end{itemize}
     \end{alertblock}
@@ -1047,7 +1047,7 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
             \item So a bitonic sequence (without considering circular shifting) can be increasing-decreasing or
                   decreasing-increasing.
             \item A monotone bitonic sequence is a sorted sequence (increasing or decreasing);
-            \item All sequences with three or less elements are bitonics.
+            \item All sequences with three or less elements are bitonic.
         \end{itemize}
     \end{exampleblock}
 \end{frame}
@@ -1056,7 +1056,7 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
     \scriptsize
 
     \begin{exampleblock}{\small Bitonic split}
-        Let's $\left\{a_{i}\right\}_{i\in\left[1;N\right]}$ a bitonic sequence. So the subsequences 
+        Let $\left\{a_{i}\right\}_{i\in\left[1;N\right]}$ be a bitonic sequence. So the subsequences 
         \[
             \left\{
             \begin{array}{lcl}
@@ -1089,7 +1089,7 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
     \scriptsize
 
     \begin{block}{\small Algorithm}
-        Apply split procedure on bitonic sequence and repeat this splitting procedure on subsequences until having one element per subsequences to obtain sorted sequence.
+        Apply split procedure on bitonic sequence and repeat this splitting procedure on subsequences until having one element per subsequence to obtain sorted sequence.
     \end{block}
 
     \begin{exampleblock}{\small Example}
@@ -1126,7 +1126,7 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
     \begin{block}{\small Procedure}
         \begin{enumerate}
             \item Split the sequence in two-elements subsequences (which are bitonics !);
-            \item \label{itm::secondStepBitonic}Sort subsequences alterning increasing and decreasing sorting (using SBS algorithm);
+            \item \label{itm::secondStepBitonic}Sort subsequences alternating increasing and decreasing sorting (using SBS algorithm);
             \item Concatenate two adjacent lists to get a longer bitonic sequence;
             \item Repeat from step \ref{itm::secondStepBitonic} until the full list becomes a bitonic sequence.
         \end{enumerate}
@@ -1206,10 +1206,10 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
         \scriptsize
         \begin{block}{Main ideas}
             \begin{itemize}
-                \item First sort with the fastest sort algorithm local data in increasing values if rank is even and decreasing values if rank is odd;
+                \item First sort local data with the fastest sort algorithm in increasing values if rank is even and decreasing values if rank is odd;
                 \item Pairing inside a subcommunicator  processes to define a bitonic sequence;
-                \item And apply bitonic sort algorithm, grouping processes per four, height and so\ldots
-                \item Sub-communicators build here are very similar to the sub-communicators build with hyperquick sort algorithms !
+                \item And apply bitonic sort algorithm, grouping processes per four, height and so on\ldots
+                \item Sub-communicators built here are very similar to the sub-communicators build with hyperquick sort algorithms !
             \end{itemize}
         \end{block}
 
@@ -1224,7 +1224,7 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
     Distribute elements of a list into a fixed number of buckets, and sort the elements inside each buckets.
     \begin{itemize}
         \item Setup an array of initially empty "buckets"
-        \item \textbf{Scatter} : Put each element of the list in right bucket
+        \item \textbf{Scatter} : Put each element of the list in the right bucket
         \item Sort the elements inside each bucket 
         \item \textbf{Gather} : Visit each bucket in order and put all elements back in original list
     \end{itemize}
@@ -1267,8 +1267,8 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
     \end{tikzpicture}
 \end{figure}
 \begin{itemize}
-    \item Complexity at best : $N + \frac{N}{k}\log_{2}(\frac{N}{k})$ comparaisons ($k$ = numbers of buckets)
-    \item \alert{Difficulty} : How choose the intervals for the buckets ?
+    \item Complexity at best : $N + \frac{N}{k}\log_{2}(\frac{N}{k})$ comparisons ($k$ = numbers of buckets)
+    \item \alert{Difficulty} : How to choose the intervals for the buckets ?
 \end{itemize}
 \end{block}
 
@@ -1292,11 +1292,11 @@ for (it=0; it<nbp-1; ++it) {// Odd-even algorithm
 
     \begin{exampleblock}{\small Analysis}
         \begin{itemize}
-            \item Local sort : $\frac{N}{nbp}\log_{2}(\frac{N}{nbp})$ comparaisons;
+            \item Local sort : $\frac{N}{nbp}\log_{2}(\frac{N}{nbp})$ comparisons;
             \item Gather bucket array : $nbp(t_{s} + (nbp+1)t_{d})$
-            \item Sort bucket array : $\frac{nbp}\log_{2}(nbp)$ comparaisons;
+            \item Sort bucket array : $\frac{nbp}\log_{2}(nbp)$ comparisons;
             \item Distribute data in buckets : $(nbp-1)\left(t_{s} + \frac{N}{nbp^{2}}t_{d}\right)$
-            \item Sort local data : $2(nbp-1)\frac{N}{nbp}$ comparaisons (fusion sort)
+            \item Sort local data : $2(nbp-1)\frac{N}{nbp}$ comparisons (fusion sort)
         \end{itemize}
     \end{exampleblock}
 \end{multicols}
