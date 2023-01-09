@@ -95,10 +95,10 @@
 
     \begin{block}{\small Principles}
         \begin{itemize}
-            \item Split a finite computing domain $\Omega$ (picture, spatial domain, and so.) in some sub-domains $\Omega_{i}$;
+            \item Split a finite computing domain $\Omega$ (picture, spatial domain, \dots) in some sub-domains $\Omega_{i}$;
             \item Apply a local method on each subdomains;
             \item Apply if necessary a global method to find the global result on $\Omega$;
-            \item The two last steps can be in a direct or iterative method.
+            \item The last two steps can be in a direct or iterative method.
         \end{itemize}
     \end{block}
 
@@ -106,8 +106,8 @@
         \begin{itemize}
             \item Color components transformation (RGB to YUV);
             \item Image is split into tiles (subdomains);
-            \item Wavelet transformation of each tiles;
-            \item Quantization of wavelet transformation of each tiles.
+            \item Wavelet transformation of each tile;
+            \item Quantization of wavelet transformation of each tile.
         \end{itemize}
     \end{exampleblock}
 \end{frame}
@@ -117,8 +117,8 @@
 
     \begin{block}{\small Types of domain decomposition methods}
         \begin{itemize}
-            \item \textcolor{blue}{\bf Overlapping domain decomposition methods} : The sub-domains share common cells (pixels, elements, and so.);
-            \item \textcolor{blue}{\bf Non Overlapping domain decomposition methods} : The sub-domains don't share common cells (pixels, elements, and so.).
+            \item \textcolor{blue}{\bf Overlapping domain decomposition methods} : The sub-domains share common cells (pixels, elements, \dots);
+            \item \textcolor{blue}{\bf Non Overlapping domain decomposition methods} : The sub-domains don't share common cells (pixels, elements, \dots).
         \end{itemize}
     \end{block}
 
@@ -222,15 +222,15 @@
     \end{multicols}
 \end{frame}
 
-\begin{frame}[fragile]{How split a computing domain ?}
+\begin{frame}[fragile]{How to split a computing domain ?}
     \scriptsize
-    Let's $\Omega$ a rectangle area in $\mathbb{R}^{2}$.
+    Let $\Omega$ be a rectanglular area in $\mathbb{R}^{2}$.
 
-    Some type of splitting :
+    Some types of splitting :
     \begin{itemize}
         \item One direction splitting : Easy to care, but not efficiency for communications;
-        \item Alternate direction      : Split in two, four or height subdomains the initial domain $\Omega$ and iterate the splitting for subdomains; Harder to care but more efficiency for parallelization and communication;
-        \item Adaptative splitting : Anyway, for parallel efficiency, better to split in the direction where we have a minimal number of cells.
+        \item Alternate direction      : Split in two, four or height subdomains the initial domain $\Omega$ and iterate the splitting for subdomains; Harder to care for but more efficient for parallelization and communication;
+        \item Adaptive splitting : Anyway, for parallel efficiency, better to split in the direction where we have a minimal number of cells.
     \end{itemize}
 
     \begin{figure}
@@ -262,7 +262,7 @@
 
             \node at (-3,-2.5) {\scriptsize One direction splitting};
             \node at (+1,-2.5) {\scriptsize Alternate direction splitting};
-            \node at (+5,-2.5) {\scriptsize Adaptative direction splitting};
+            \node at (+5,-2.5) {\scriptsize Adaptive direction splitting};
         \end{tikzpicture}
     \end{figure}
 \end{frame}
@@ -278,14 +278,14 @@
         \end{itemize}
     \end{block}
 
-    \begin{exampleblock}{\small How split a non structured mesh ?}
+    \begin{exampleblock}{\small How to split a non structured mesh ?}
         \begin{itemize}
             \item Minimize the size of the interfaces between sub-domains;
             \item Optimal minimization is a NP-problem. 
-            \item Use some approximation or heuristics
-            \item Some libraries exists for graph partitioning :
+            \item Use some approximations or heuristics
+            \item Some libraries exist for graph partitioning :
             \begin{itemize}
-                \item {\scriptsize scotch (inria);}
+                \item {\scriptsize scotch (Inria);}
                 \item {\scriptsize metis (Karypis Lab)};
             \end{itemize}
         \end{itemize}
@@ -312,7 +312,7 @@
     \begin{itemize}
         \item A pixel $p_{i,j}$ located by i and j indices on grid
         \item $v_{i,j}$ is the intensity of the pixel $p_{i,j}$;
-        \item Discrete laplacian scheme\\
+        \item Discrete Laplacian scheme\\
         $u_{i,j} = v_{i-1,j}+v_{i+1,j}+v_{i,j-1}+v_{i,j+1}-4v_{ij}$
         \item Consider pixel out of the image as black ($=0$)
     \end{itemize}
