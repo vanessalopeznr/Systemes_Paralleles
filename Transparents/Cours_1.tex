@@ -9,6 +9,8 @@
 \usepackage{multirow}
 \usepackage{hyperref}
 \usepackage{colortbl}
+\usepackage{eurosym}
+\usepackage{mdframed}
 %\setlength{\columnseprule}{1pt}
 %\def\columnseprulecolor{\color{blue}}
 \usepackage{minted} % syntax coloring. 
@@ -168,7 +170,7 @@
         \begin{itemize}
         \item Deep learning used in AI to categorize pictures, automatic translations, cancerous cells detection, automatic vehicles, and so.
         \item In sequential, required more than one year to learn;
-        \item with GPGPU, required about one month;
+        \item with GPGPU, required about some hours or few days;
         \item \textcolor{blue}{March 2016} : Alphago wins versus world GO human champion (supervised learning);
         \item \textcolor{DarkGreen}{October 2017}: Alphago zero wins versus alphago at 100 games to zero (deep learning).
   \end{itemize}
@@ -374,7 +376,7 @@
             \item Many physical memory units interleaved by the memory bus;
             \item Number of physical memory units $\equiv$ number of ways;
             \item Number of contiguous bytes in a unique physical memory $\equiv$ width of way;
-            \item \alert{Quadratic cost to build relative to number of memory units} !
+            \item \alert{Quadratic cost in \euro{} to build, relative to number of memory units} !
         \end{itemize}
        \end{block}
 \end{frame}
@@ -838,7 +840,7 @@ else if (rank==1)
             \item A non blocking send is copied in a buffer before to be sent;
             \item $\Rightarrow$ \textcolor{DarkGreen}{After calling a non blocking send, the user can modify the sent data without
                   changing the values to send};
-            \item It's the default behavior when we send a message
+            \item It's the default behavior when we send a small message
             \item But the copy of the data in a buffer has a memory and CPU cost !
             \item We can call send functions which doesn't copy the data in a buffer;
             \item \alert{It's the responsibility of the user to avoid to change data before the completion of the message !}
@@ -848,39 +850,48 @@ else if (rank==1)
 
 \begin{frame}[fragile]{Example of non buffered messages}
     \begin{multicols}{2}
+\begin{mdframed}[backgroundcolor=green!20]
+\begin{minipage}{0.45\textwidth}
 \begin{minted}{c++}
 std::vector<double> tab{3.,5.,7.,11.};
-// Blocking non buffered send
+// Blocking non bufferized send
 MPI_Ssend(tab.data(), tab.size(), 
           MPI_DOUBLE, 1, 104, commGlob);
-// OK, tab is sent when we 
-//     modify the buffer
+// OK, tab sended, can modify the buffer
 tab[3] = 13.;
 \end{minted}
-\textcolor{DarkGreen}{Right example}
+\textcolor{DarkGreen}{\small Right example}
+\end{minipage}
+\end{mdframed}
+\begin{mdframed}[backgroundcolor=green!20]
+\begin{minipage}{0.45\textwidth}
 \begin{minted}{c++}
 std::vector<double> tab{3.,5.,7.,11.};
-// Non blocking non buffered send
+// Non blocking non bufferized send
 MPI_Issend(tab.data(), tab.size(), 
-           MPI_DOUBLE, 1, 104, commGlob,&request);
+    MPI_DOUBLE, 1, 104, commGlob,&request);
 MPI_Wait(&request, &status);
-// OK, tab is sent when we 
-//     modify the buffer
+// OK, tab sended, can modify the buffer
 tab[3] = 13.;
 \end{minted}
-\textcolor{DarkGreen}{Right example}
-    
+\textcolor{DarkGreen}{\small Right example}
+\end{minipage}
+\end{mdframed}
 \columnbreak
+\begin{mdframed}[backgroundcolor=red!20]
+\begin{minipage}{0.45\textwidth}
 \begin{minted}{c++}
 std::vector<double> tab{3.,5.,7.,11.};
-// Non blocking non buffered send
+// Non blocking non bufferized send
 MPI_Issend(tab.data(), tab.size(), 
-           MPI_DOUBLE, 1, 104, commGlob,&request);
+    MPI_DOUBLE, 1, 104, commGlob,&request);
 // ERROR, we modify the buffer before
-//        than the tab is sent !
+//        than the tab is sended !
 tab[3] = 13.;
 \end{minted}
-\textcolor{red}{Wrong example}
+\textcolor{red}{\small Wrong example}
+\end{minipage}
+\end{mdframed}
 \end{multicols}
 \end{frame}
 

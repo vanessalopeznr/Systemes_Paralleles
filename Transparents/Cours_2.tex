@@ -111,7 +111,7 @@ So, the best expected speedup is:
     S(n) = \frac{t_{s}}{f.t_{s}+\frac{(1-f)t_{s}}{n}} = \frac{n}{1+(n-1)f} \xrightarrow[n \to \infty]{} \frac{1}{f}
 \]
 
-This law is useful to find the maximal number of computing cores to use for an application.
+This law is useful to find a reasonable number of computing cores to use for an application.
 
 \begin{alertblock}{Limitation of the law}
     $f$ may change with the volume of input data and bigger input data may improve the speed-up.
@@ -170,18 +170,18 @@ This law is useful to find the maximal number of computing cores to use for an a
         \end{itemize}
         \item \textcolor{darkorange}{Try to minimize the number of data exchange between processes}
         \item The greater the ratio between number of computation instructions and messages to exchange, the better will be your speed-up !
-        \item \alert{Granularity can be improved with non blocking data exchanges}.
+        \item \alert{Low speedup can be improved with non blocking data exchanges}.
     \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Load balancing}
     \scriptsize
     \begin{block}{Definition}
-        \textbf{All processes execute a computation section of the code at the same time};
+      \textbf{All processes execute a computation section of the code with same duration};
     \end{block}
 
     \begin{itemize}
-        \item Great penalties in time occur if some parts of the code are far away from load balancing;
+        \item Speedup is badly impacted if some parts of the code are far away from load balancing;
         \item \textbf{Example 1} : A function takes $t$ seconds for the half of the processes, and $\frac{t}{2}$
               for other processes. The maximal speed-up for this function will be :
             \[
@@ -194,7 +194,7 @@ This law is useful to find the maximal number of computing cores to use for an a
           \]
   \end{itemize}
 
-  \textbf{Remark} : Greater is the time taken to execute a  bad load balancing function, greater is the penalty. Don't worry
+  \textbf{Remark} : Longer is the time token to execute a bad load balancing function, greater the penalty. Don't worry
   about load balancing for functions taking very small time to execute
 \end{frame}
 
@@ -344,6 +344,7 @@ This law is useful to find the maximal number of computing cores to use for an a
             \item Each process computes the length and the height for a subset of initial values $u_{0}$;
             \item The computation intensity depends of the length of each Syracuse series;
             \item It's impossible to know the computation complexity of a series, prior to computing it
+            \item The problem is not naturally well balanced;
         \end{itemize}
         $\Rightarrow$ Use a dynamic algorithm on "root" process (the "master" process) to distribute series among other processes ("slaves")
     \end{block}
@@ -404,7 +405,7 @@ This law is useful to find the maximal number of computing cores to use for an a
     \item Integral computation based on Gauss quadrature formulae :
       \[
       \int_{a}^{b}f(x)dx \approx \sum_{i=1}^{Ng} \omega_{i}f(g_{i})
-      \]
+2      \]
       where $\omega_{i}\in\mathbb{R}$ are the weights  and $g_{i}\in\mathbb{R}$ the integration points.
     \item In fact, Gauss quadrature are given on $[-1;1]$ interval : some variable modification to do in the integral !;
     \item $\left\{ g_{1}=0, \omega_{1}=2 \right\}$ : Order 1 Legendre Gauss quadrature;
@@ -419,7 +420,7 @@ This law is useful to find the maximal number of computing cores to use for an a
   \scriptsize
   \begin{center}
     \[
-    I = \int_{a}^{b}f(x)dx = \sum_{i=1}^{N}\int_{a_{i}}^{b_{i}}f(x)dx = \sum_{i=1}^{N} I_{i} \mbox{ where } a_{1}=a, b_{N} = b\mbox{ and } a_{i} < b_{i} < a_{i+1}
+    I = \int_{a}^{b}f(x)dx = \sum_{i=1}^{N}\int_{a_{i}}^{b_{i}}f(x)dx = \sum_{i=1}^{N} I_{i} \mbox{ where } a_{1}=a, a_{N+1}= b_{N} = b\mbox{ and } a_{i} < b_{i} = a_{i+1}
     \]
   \end{center}
   \begin{block}{\small Main ideas}

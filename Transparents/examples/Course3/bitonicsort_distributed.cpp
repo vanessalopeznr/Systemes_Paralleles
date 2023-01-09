@@ -170,9 +170,9 @@ int main( int nargs, char* argv[] )
         MPI_Comm_split(global, rank/(1<<idim), rank, &commCubes[idim]);
     }// On n'utilise pas le comm zéro car représente un seul process
     std::vector<std::int32_t> buffer(localValues.size());
-    if (rank%2 == 0)
+    if (rank%2 == 0)// On trie dans l'ordre croissant
         std::sort(localValues.begin(), localValues.end());
-    else 
+    else // On trie dans le sens inverse (decroissant) : 
         std::sort(localValues.rbegin(), localValues.rend() );
 #   ifdef DEBUG
     if (localValues.size() < 100)

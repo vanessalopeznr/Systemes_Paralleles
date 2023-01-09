@@ -28,7 +28,7 @@
 \newminted{cpp}{}
 }
 \usepackage{hyperref}
-\usetikzlibrary{shadows, arrows, arrows.meta, decorations.pathmorphing, fadings, shapes.arrows, positioning, calc, shapes, fit, matrix,math, tikzmark}
+\usetikzlibrary{shadows, arrows, arrows.meta, decorations.pathmorphing, fadings, shapes.arrows, positioning, calc, shapes, fit, matrix,math, tikzmark, patterns}
 
 \definecolor{lightblue}{RGB}{0,200,255} 
 \definecolor{paper}{RGB}{255,247,197}
@@ -332,12 +332,51 @@
     \draw[color=cyan!50!black, dashed] (0, 1.85) -- (2.3, 1.85) node at (-0.2,1.85) {$\mathit{j}$};
     \end{tikzpicture}
 \end{figure}
+\end{multicols}
 
+\begin{multicols}{2}
+\begin{minipage}{0.45\textwidth}
+  \begin{figure}
+    \includegraphics[width=0.35\textwidth]{../Images/ned.png}
+    \caption{\scriptsize Before filter}
+  \end{figure}
+\end{minipage}
+\begin{minipage}{0.45\textwidth}
+  \begin{figure}
+    \includegraphics[width=0.35\textwidth]{../Images/lapl_ned.png}
+    \caption{\scriptsize After filter}
+  \end{figure}
+\end{minipage}
 \end{multicols}
 \end{frame}
 
 \begin{frame}[fragile]{Ghost cells}
-p
+  \scriptsize
+  \begin{multicols}{2}
+  \begin{block}{\small Parallelization of the laplacian filter}
+    \begin{itemize}
+    \item Apply decomposition domain on image domain;
+    \item But need close pixels (right, left, above, bottom);
+    \item Add a layer of image pixels in each direction
+    \item These pixels are named \textsl{ghost cells};
+    \item For sub-domain which contains boundary condition,\\
+          fill ghost cells with adequate values.
+    \end{itemize}
+  \end{block}
+
+  \begin{center}
+\begin{tikzpicture}
+  \draw[color=red, ultra thick, pattern=grid, pattern color=orange] (-2,-2) rectangle (0.5,2);
+  \draw[color=blue, pattern=grid, pattern color=green] (-0.5,-2.) rectangle (2,2.);
+  \draw[pattern color=orange, pattern = north east lines] (-0.5,-2.) rectangle (0.5,2.);
+  \node[color=red] at (-1,0) {\Huge \bf $\Omega_{1}$};
+  \node[color=blue] at (1,0) {\Huge \bf $\Omega_{2}$};
+  \draw[<->, color=red] (-2,-2.1) -- (0.5,-2.1);
+  \draw[<->, color=blue] (-0.5,-2.3) -- (2,-2.3);
+  %\draw[ultra thick, loosely dotted,color=orange] (0,0) circle (2cm);
+\end{tikzpicture}
+\end{center}
+\end{multicols}
 \end{frame}
 
 \subsection{Implicit methods}
