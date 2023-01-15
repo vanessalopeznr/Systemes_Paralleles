@@ -12,7 +12,8 @@ CFLAGS      = -O3 -march=native -fPIC
 CXXFLAGS    = ${CFLAGS} -std=c++17 $(INCPATH)
 endif
 
-ALL= sequential_laplacian.exe ghostcells_laplacian.exe
+ALL= sequential_laplacian.exe ghostcells_laplacian.exe \
+	sequential_inpainting.exe
 
 default:	help
 
@@ -27,6 +28,8 @@ sequential_laplacian.exe : sequential_laplacian.cpp lodepng.cpp
 ghostcells_laplacian.exe : ghostcells_laplacian.cpp lodepng.cpp
 	$(MPICXX) $(CXXFLAGS) -o $@ $^ $(LIBMPI)
 
+sequential_inpainting.exe : sequential_inpainting.cpp laplacian.cpp cholesky_incomplet.cpp tridiag_prec.cpp lodepng.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
 help:
 	@echo "Available targets : "

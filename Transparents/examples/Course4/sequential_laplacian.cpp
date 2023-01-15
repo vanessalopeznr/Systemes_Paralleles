@@ -31,8 +31,6 @@ convertToRGBA( std::vector<double> const& intensity )
         image[4*i+2] = (unsigned char)(scal*(intensity[i]-minValue));
         image[4*i+3] = 255;
     }
-    image[3] = (unsigned char)(scal);
-    image[7] = (unsigned char)(std::abs(scal*minValue));
     return image;
 }
 // ------------------------------------------------------------------------

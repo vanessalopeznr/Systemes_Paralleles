@@ -857,7 +857,7 @@ std::vector<double> tab{3.,5.,7.,11.};
 // Blocking non bufferized send
 MPI_Ssend(tab.data(), tab.size(), 
           MPI_DOUBLE, 1, 104, commGlob);
-// OK, tab sended, can modify the buffer
+// OK, tab sent, can modify the buffer
 tab[3] = 13.;
 \end{minted}
 \textcolor{DarkGreen}{\small Right example}
@@ -871,7 +871,7 @@ std::vector<double> tab{3.,5.,7.,11.};
 MPI_Issend(tab.data(), tab.size(), 
     MPI_DOUBLE, 1, 104, commGlob,&request);
 MPI_Wait(&request, &status);
-// OK, tab sended, can modify the buffer
+// OK, tab sent, can modify the buffer
 tab[3] = 13.;
 \end{minted}
 \textcolor{DarkGreen}{\small Right example}
@@ -886,7 +886,7 @@ std::vector<double> tab{3.,5.,7.,11.};
 MPI_Issend(tab.data(), tab.size(), 
     MPI_DOUBLE, 1, 104, commGlob,&request);
 // ERROR, we modify the buffer before
-//        than the tab is sended !
+//        than the tab is sent !
 tab[3] = 13.;
 \end{minted}
 \textcolor{red}{\small Wrong example}

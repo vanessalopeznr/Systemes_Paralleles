@@ -14,7 +14,8 @@
 \usepackage{tcolorbox}
 %\setlength{\columnseprule}{1pt}
 %\def\columnseprulecolor{\color{blue}}
-\usepackage{minted} % syntax coloring. 
+\usepackage{minted} % syntax coloring.
+\usepackage{algorithm2e}
 \setminted{encoding=utf-8, autogobble}
 \usemintedstyle{xcode}
 \AtBeginEnvironment{minted}{\fontsize{7}{7}\selectfont}
@@ -360,10 +361,20 @@
     \item Add a layer of image pixels in each direction
     \item These pixels are named \textsl{ghost cells};
     \item For sub-domain which contains boundary condition,\\
-          fill ghost cells with adequate values.
+      fill ghost cells with adequate values (0 for laplacian filter).
+    \item Application of laplacian filter is a nearly embarassingly parallel algorithm
+    \item One must rebuild the complete filtered image after application \\ of laplacian filter.
     \end{itemize}
   \end{block}
 
+  \begin{alertblock}{\small Remarks}
+    \begin{itemize}
+    \item \alert{If possible}, each process reads his part of the image;
+    \item Better to use communicator splitting and global communication than point to point communication
+      when rebuilding complete image.
+    \end{itemize}
+  \end{alertblock}
+  
   \begin{center}
 \begin{tikzpicture}
   \draw[color=red, ultra thick, pattern=grid, pattern color=orange] (-2,-2) rectangle (0.5,2);
@@ -380,6 +391,86 @@
 \end{frame}
 
 \subsection{Implicit methods}
+
+\begin{frame}[fragile]{Inpainting algorithm}
+  \scriptsize
+  \begin{block}{\small Definition}
+    Inverse operation of laplacian filter. From filtered image, rebuild the original image.
+
+    \begin{itemize}
+    \item It't an inverse laplacian problem;
+    \item This problem has a unique solution, thanks to the boundary (dirichlet) condition (fixed value 0 out of the image);
+    \item Inpainting is a research domain to achieve real-time decoding for 4K colour images of size $3840\times 2160$ pixels for TV applications using GPGPU (Domain decomposition algorithms for real-time homogeneous diffusion inpainting in 4k, Niklas Kämper and Joachim Weickert, 14 February 2022).
+    \item Symmetric definite positive linear system to solve;
+    \item The left hand side matrix is the laplacian filter !
+    \item Use some iterative or direct solver (conjugate gradient or sparse LU algorithm per example).
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Parallel conjugate gradient algorithm}
+  \scriptsize
+  \begin{multicols}{2}
+  \begin{exampleblock}{\small Conjugate gradient algorithm}
+    \begin{algorithm}[H]
+      $p_{0} = r_{0} = b-A.x_{0}$\;
+      $k=0$\;
+      \While{$\|r_{k}\|>\varepsilon$}{
+        $\alpha_{k} = \frac{\|r_{k}\|^{2}}{p_{k}^{T}Ap_{k}}$\;
+        $x_{k+1}=x_{k} + \alpha_{k}p_{k}$\;
+        $r_{k+1}=r_{k} - \alpha_{k}Ap_{k}$\;
+        \If{$\|r_{k+1}\|<\varepsilon$}{
+          exit loop\;
+        }
+        $\beta_{k} = \frac{\|r_{k+1}\|^{2}}{\|r_{k}\|^{2}}$\;
+        $p_{k+1} = r_{k+1} + \beta_{k}p_{k}$\;
+        $k \leftarrow k+1$\;
+      }
+      return $x_{k+1}$ as the result\;
+    \end{algorithm}
+  \end{exampleblock}
+
+  \begin{itemize}
+  \item Usually, if not smart $x_{0}$ can be chosen, one takes null vector as $x_{0}$;
+  \item Very slow to converge $\Rightarrow$ use a local preconditioner;
+  \item Same splitting of the image for parallel implementation;
+  \item For parallel implementation, processes must exchanges values to update ghost cells value for each iteration of conjugate gradient;
+    \begin{tikzpicture}
+      \node[fill=red,inner sep=1.0] (P0) at (0,0){};
+      \node[red] at (0,0.2){n-3};
+      \node[fill=blue,inner sep=1.0] (Q0) at (3,-1){};
+      \node[blue] at (3,-1.25){ghost cell};
+      \foreach \x [evaluate=\x as \y using {int(\x-1)}] in {1,2,3,4} {
+        \node[fill=red,inner sep=1.0] (P\x) at (\x,0){};
+        \draw[red] (P\y) -- (P\x);
+        \node[fill=blue,inner sep=1.0] (Q\x) at (\x+3,-1){};
+        \draw[blue] (Q\y) -- (Q\x);
+        \node[blue] at (\x+3,-1.25){\y};
+      }
+      \node[red] at (1,0.2){n-2};
+      \node[red] at (2,0.2){n-1};
+      \node[red] at (3,0.2){n};
+      \node[red] at (4,0.2){ghost cell};
+      \draw[DarkGreen, ->] (P3) -- (Q0);
+      \draw[darkorange, ->] (Q1) -- (P4);
+    \end{tikzpicture}
+  \item Computing dot product or norm of vector needs global reduction.
+  \end{itemize}
+  \end{multicols}
+\end{frame}
+
+\begin{frame}[fragile]{Efficiency of parallel conjugate gradient algorithm}
+  \scriptsize
+  \begin{block}{Efficiency}
+    Let's an image with resolution $W\times H$ pixels.\\
+    Let's $N = W \times H$ the number of pixels contained in the image. So, per iteration of conjugate gradient :
+    \begin{itemize}
+    \item About $5\frac{N}{nbp}$ additions and multiplications;
+    \item About % A FAIRE : Calculer sur papier le nombre de cellules échangées par itération.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
 
 \section{Non overlapping domain decomposition methods}
 
