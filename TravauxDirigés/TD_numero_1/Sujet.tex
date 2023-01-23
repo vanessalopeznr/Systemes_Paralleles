@@ -16,7 +16,7 @@
 %\usepackage[T1]{fontenc}
 %\usepackage{polyglossia}
 %\setmainlanguage[]{french}
-\usepackage[top=30pt,bottom=30pt,left=48pt,right=46pt]{geometry}
+\usepackage[top=30pt,bottom=50pt,left=48pt,right=46pt]{geometry}
 \usepackage{listings}
 
 \lstset{
@@ -61,36 +61,34 @@ $\left\{u_{B},v_{B}\right\}$ :
 	A & = & u_{A}.v_{A}^{T}\mbox{ soit } A_{ij} = u_{A_{i}}.v_{A_{j}} \\
 	B & = & u_{B}.v_{B}^{T}\mbox{ soit } B_{ij} = u_{B_{i}}.v_{B_{j}}
     \end{array}
-\right.
+\right..
 \]
 
-On calcule le produit matrice--vecteur C=A.B à l'aide d'un produit matrice--matrice plein ( complexité de $2.n^{3}$ opérations arithmétiques )
+On calcule le produit matrice--vecteur C=A.B à l'aide d'un produit matrice--matrice plein (complexité de $2.n^{3}$ opérations arithmétiques)
 et on valide le résultat obtenu à l'aide de l'expression sous forme de produit tensoriel de $A$ et $B$ :
 \[
 \begin{array}{lclclcl}
 C & = & A.B & = & \left(u_{A}.v_{A}^{T}\right).\left(u_{B}.v_{B}^{T}\right) & = &  u_{A}\left(v_{A}^{T}.u_{B}\right)v_{B}^{T}\\
  &=& u_{A}\left(v_{A}|u_{B}\right)v_{B}^{T} & = & \left(v_{A}|u_{B}\right)u_{A}.v_{B}^{T}
- \end{array}
+ \end{array}.
 \]
 
-Soit
+Soit :
 \[
-C_{ij} = \left(v_{A}|u_{B}\right)u_{A_{i}}.v_{B_{j}}
+C_{ij} = \left(v_{A}|u_{B}\right)u_{A_{i}}.v_{B_{j}},
 \]
-ce qui nécessite en tout $2.n+2.n^{2}$ opérations arithmétiques ( dont $2.n$ opérations pour le produit scalaire~).
+ce qui nécessite en tout $2.n+2.n^{2}$ opérations arithmétiques (dont $2.n$ opérations pour le produit scalaire).
 
-On se propose par étape de paralléliser en mémoire partagée le produit matrice--matrice fourni dans le fichier \texttt{ProdMatMat.cpp}. 
+On se propose, par étape, de paralléliser en mémoire partagée le produit matrice--matrice fourni dans le fichier \texttt{ProdMatMat.cpp}. 
 L'exécutable pour tester le produit matrice-matrice est \texttt{TestProduitMatrix.exe} :
 
 \begin{enumerate}
-	\item Mesurer le temps de calcul du produit matrice--matrice donné en donnant en entrée diverses dimensions. Essayez en particulier de prendre pour dimension 1023, 1024 et 1025 (il suffit de passer la dimension en argument à l'exécution. Par exemple \verb@./TestProductMatrix.exe 1023@ testera le produit matrice-matrice pour des matrices de dimension 1023). En vous servant 
-	des transparents du cours, expliquez clairement les temps obtenus.
-	\item \textbf{\color{blue}Première optimisation :} Permutez les  boucles en $i,j$ et $k$ jusqu'à obtenir un temps optimum pour le calcul du produit matrice--matrice ( et après vous être persuadé que cela ne changera rien au résulat du calcul ). Expliquez pourquoi la permutation des boucles optimales que vous avez trouvée
+	\item Mesurez le temps de calcul du produit matrice--matrice donné en donnant en entrée diverses dimensions. Essayez en particulier de prendre pour dimension 1023, 1024 et 1025 (il suffit de passer la dimension en argument à l'exécution. Par exemple \verb@./TestProductMatrix.exe 1023@ testera le produit matrice-matrice pour des matrices de dimension 1023). En vous servant des transparents du cours, expliquez clairement les temps obtenus.
+	\item \textbf{\color{blue}Première optimisation :} Permutez les  boucles en $i,j$ et $k$ jusqu'à obtenir un temps optimum pour le calcul du produit matrice--matrice (et après vous être persuadé que cela ne changera rien au résulat du calcul). Expliquez pourquoi la permutation des boucles optimale que vous avez trouvée
 	est bien la façon optimale d'ordonner les boucles en vous servant toujours du support de cours.
-	\item \textbf{\color{blue}Première parallélisation : } \`A l'aide d'OpenMP, paralléliser le produit matrice--matrice. Mesurez le temps obtenu en variant le nombre de threads à l'aide de la variable d'environnement \texttt{OMP\_NUM\_THREADS}. Calculez l'accélération et le résultat obtenu en fonction du nombre de threads et commentez et expliquez clairement les résultats obtenus. 
+	\item \textbf{\color{blue}Première parallélisation :} A l'aide d'OpenMP, parallélisez le produit matrice--matrice. Mesurez le temps obtenu en variant le nombre de threads à l'aide de la variable d'environnement \texttt{OMP\_NUM\_THREADS}. Calculez l'accélération et le résultat obtenu en fonction du nombre de threads, commentez et expliquez clairement ces résultats. 
 	\item Argumentez et donnez clairement la raison pour laquelle il est sûrement possible d'améliorer le résultat que vous avez obtenu.
-	\item \textbf{\color{blue}Deuxième optimisation }: 
-	Pour pouvoir exploiter au mieux la mémoire cache, on se propose de transformer notre produit matrice--matrice "scalaire" en produit matrice--matrice par bloc ( on se servira pour le produit "bloc--bloc" de la meilleurs version \textbf{séquentielle} du produit matrice--matrice obtenu précédemment ).
+	\item \textbf{\color{blue}Deuxième optimisation :} Pour pouvoir exploiter au mieux la mémoire cache, on se propose de transformer notre produit matrice--matrice "scalaire" en produit matrice--matrice par bloc (on se servira pour le produit "bloc--bloc" de la meilleure version \textbf{séquentielle} du produit matrice--matrice obtenu précédemment).
 
 	L'idée est de décomposer les matrices $A,B$ et $C$ en sous-blocs matriciels :
 	\[
@@ -117,50 +115,50 @@ L'exécutable pour tester le produit matrice-matrice est \texttt{TestProduitMatr
 	\vdots &        & \ddots & \vdots \\
 	C_{N1} &        &        & C_{NN}
 	\end{array}
-	\right)
+	\right),
 	\]
 
-où $A_{IJ},B_{IJ}$ et $C_{IJ}$ sont des sous--blocs possédant une taille fixée ( par le programmeur ).
+où $A_{IJ},B_{IJ}$ et $C_{IJ}$ sont des sous--blocs possédant une taille fixée (par le programmeur ).
 
-Le produit matrice--matrice se fait alors par bloc. Pour calculer le bloc $C_{IJ}$, on calcul
+Le produit matrice--matrice se fait alors par bloc. Pour calculer le bloc $C_{IJ}$, on calcule :
 \[
-C_{IJ} = \sum_{K=1}^{N}A_{IK}.B_{KJ}
+C_{IJ} = \sum_{K=1}^{N}A_{IK}.B_{KJ}.
 \]
 
 Mettre en {\oe}uvre ce produit matrice--matrice en séquentiel puis faire varier la taille des blocs jusqu'à obtenir un optimum.
 \item Comparer le temps pris par rapport au produit matrice--matrice "scalaire". Comment interprétez vous le résultat obtenu~?
 
-\item \textbf{\color{blue}Parallélisation du produit matrice--matrice par bloc }: \`A l'aide d'OpenMP, parallélisez le produit matrice--matrice par bloc puis mesurez l'accélération parallèle en fonction du nombre de threads. Comparez avec la version scalaire paralléliser. Comment expliquez vous ce résultat ?
-\item \textbf{\color{blue}{Comparaison avec blas}}: Comparer vos résultat avec l'exécutable \texttt{produit\_matmat\_blas.exe} qui utilise un produit matrice-matrice 
-                                                     optimisé. Quel rapport de temps obtenez vous ? Quelle version est la meilleures selon vous ?
+\item \textbf{\color{blue}Parallélisation du produit matrice--matrice par bloc }: \`A l'aide d'OpenMP, parallélisez le produit matrice--matrice par bloc puis mesurez l'accélération parallèle en fonction du nombre de threads. Comparez avec la version scalaire parallélisée. Comment expliquez vous ce résultat ?
+\item \textbf{\color{blue}{Comparaison avec blas}}: Comparez vos résultat avec l'exécutable \texttt{produit\_matmat\_blas.exe} qui utilise un produit matrice-matrice 
+                                                     optimisé. Quel rapport de temps obtenez vous ? Quelle version est la meilleure selon vous ?
 \end{enumerate}
 
 \section{Parallélisation MPI}
 
-Ecrivez en Python les programmes suivants:
+Ecrivez en langage Python les programmes suivants.
 
 \subsection{Circulation d'un jeton dans un anneau}
 
-Ecrivez un programme tel que:
+Ecrivez un programme tel que :
 \begin{enumerate}
-	\item Le processus de rang zéro initialise un jeton à 1 puis l'envoie au processus de rang un;
-	\item Le processus de rang un reçoit le jeton, l'incrémente de un puis l'envoie au processus de rang deux;
+	\item le processus de rang zéro initialise un jeton à 1 puis l'envoie au processus de rang un;
+	\item le processus de rang un reçoit le jeton, l'incrémente de un puis l'envoie au processus de rang deux;
 	\item \ldots
-	\item Le processus de rang $p$ reçoit le jeton, l'incrémente de un puis l'envoie au processus de rang $p+1$ ($0<p<nbp-1$);
+	\item le processus de rang $p$ reçoit le jeton, l'incrémente de un puis l'envoie au processus de rang $p+1$ ($0<p<nbp-1$);
 	\item \ldots
-	\item Le processus de rang $\mbox{nbp}-1$ reçoit le jeton, l'incrémente de un et l'envoie au processus de rang zéro;
-	\item Le processus de rang zéro reçoit le jeton du processus $\mbox{nbp}-1$ et l'affiche à l'écran.
+	\item le processus de rang $\mbox{nbp}-1$ reçoit le jeton, l'incrémente de un et l'envoie au processus de rang zéro;
+	\item le processus de rang zéro reçoit le jeton du processus $\mbox{nbp}-1$ et l'affiche à l'écran.
 \end{enumerate}
 
 \subsection{Calcul tr\`es approch\'e de pi}
 
-On veut calculer la valeur de pi à l'aide de l'algorithme stochastique suivant:
+On veut calculer la valeur de pi à l'aide de l'algorithme stochastique suivant :
 \begin{itemize}
-\item On considère le carré unité
-$\left[-1;1\right]\times \left[-1;1\right]$ dans lequel on inscrit le cercle unité de centre $(0,0)$ et de rayon $1$.
-\item On génère des points aléatoirement dans le carré unité.
-\item On compte le nombre de points générés dans le carré qui sont aussi dans le cercle.
-\item Soit $r$ ce nombre de points dans le cercle divisé par le nombre de points
+\item on considère le carré unité
+$\left[-1;1\right]\times \left[-1;1\right]$ dans lequel on inscrit le cercle unité de centre $(0,0)$ et de rayon $1$;
+\item on génère des points aléatoirement dans le carré unité;
+\item on compte le nombre de points générés dans le carré qui sont aussi dans le cercle;
+\item soit $r$ ce nombre de points dans le cercle divisé par le nombre de points
   total dans le carré, on calcule alors pi comme $\pi = 4.r$.
 \end{itemize}
 
@@ -174,18 +172,18 @@ Remarquez que l'erreur faite sur pi décroit quand le nombre de points généré
 \end{tikzpicture}
 \end{center}
 
+Couper l'itération de boucle en plusieurs morceaux pouvant être exécutés par différentes tâches
+simultanément:
 \begin{itemize}
-\item Couper l'itération de boucle en plusieurs morceaux pouvant être exécutés par différentes tâches
-simultanément;
-\item Chaque tâche exécute sa portion de boucle;
-\item Chaque tâche peut exécuter son travail sans avoir besoin d'information des autres tâches ( indépendance
-des données );
-\item La tâche maître ( que le programmeur aura choisi parmi ses tâches ) reçoit le résultat des autres
-tâches à l'aide d'échanges de message point à point.
-\item Utiliser l'échange de message global adéquat pour obtenir le résultat final;
-\item Mesurez le temps mis par les deux versions (séquentiel et parallèle) et calculez 
-l'accélération obtenue. Est-ce cohérent avec votre machine (cf. \verb|lscpu| ou gestionnaire de tâches) ?
+\item chaque tâche exécute sa portion de boucle;
+\item chaque tâche peut exécuter son travail sans avoir besoin d'information des autres tâches (indépendance des données);
+\item la tâche maître (que le programmeur aura choisi parmi ses tâches) reçoit le résultat des autres
+tâches à l'aide d'échanges de message point à point;
+\item utiliser l'échange de message global adéquat pour obtenir le résultat final.
 \end{itemize}
+
+Mesurez le temps mis par les deux versions (séquentiel et parallèle) et calculez 
+l'accélération obtenue. Est-ce cohérent avec votre machine (cf. \verb|lscpu| ou gestionnaire de tâches) ?
 
 \begin{center}
 \begin{tikzpicture}[scale=2]
@@ -204,26 +202,26 @@ l'accélération obtenue. Est-ce cohérent avec votre machine (cf. \verb|lscpu| 
 
 \fbox{
 \begin{minipage}{\textwidth}
-\underline{Le concept}: diviser le travail parmi les tâches disponibles en communicant des données à l'aide
-d'appel à des fonctions d'envoi/réception point à point
+\underline{Le concept} : diviser le travail parmi les tâches disponibles en communicant des données à l'aide
+d'appel à des fonctions d'envoi/réception point à point.
 \end{minipage} }
 
 \subsection{Diffusion d'un entier dans un réseau hypercube\textcolor{red}{$^{\star}$}}
 
 On veut écrire un programme qui diffuse un entier dans un réseau de n{\oe}uds de calculs dont la topologie
-est équivalente à celle d'un hypercube de dimension $d$ ( et qui contient donc $2^{d}$ n{\oe}uds de calcul ).
+est équivalente à celle d'un hypercube de dimension $d$ (et qui contient donc $2^{d}$ n{\oe}uds de calcul).
 
 \begin{enumerate}
 \item \'Ecrire un programme qui diffuse un entier dans un hyper cube de dimension 1 :
 \begin{itemize}
-\item La tâche 0 initialise un jeton à une valeur entière choisie par le programmeur et envoie cette valeur 
+\item la tâche 0 initialise un jeton à une valeur entière choisie par le programmeur et envoie cette valeur 
 à la tâche 1; 
-\item La tâche 1 reçoit la valeur du jeton de la tâche 0;
-\item Les deux tâches affichent la valeur du jeton;
+\item la tâche 1 reçoit la valeur du jeton de la tâche 0;
+\item les deux tâches affichent la valeur du jeton.
 \end{itemize}
 \item Diffuser le jeton généré par la tâche 0 dans un hypercube de dimension 2 de manière que cette diffusion se fasse en un minimum
 d'étapes (et donc un maximum de communications simultanées entre tâches).
-\item Faire de même pour un hypercube de dimension 3
+\item Faire de même pour un hypercube de dimension 3.
 \item \'Ecrire le cas général quand le cube est de dimension $d$. Le nombre d'étapes pour diffuser le jeton devra
 être égal à la dimension de l'hypercube.
 \end{enumerate}
