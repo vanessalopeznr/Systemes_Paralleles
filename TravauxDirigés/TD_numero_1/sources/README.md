@@ -1,8 +1,7 @@
 
+# TD1
 
-# TP2 de NOM Prénom
-
-`pandoc -s --toc tp2.md --css=./github-pandoc.css -o tp1.html`
+`pandoc -s --toc README.md --css=./github-pandoc.css -o README.html`
 
 
 
@@ -11,7 +10,7 @@
 ## lscpu
 
 ```
-coller ici le résultats de lscpu. 
+coller ici les infos *utiles* de lscpu. 
 ```
 
 *Des infos utiles s'y trouvent : nb core, taille de cache*
@@ -92,7 +91,7 @@ Speed-up       |         |         |                |                |          
 
 
 
-### Comparaison with BLAS
+### Comparaison with BLAS
 
 
 # Tips 
