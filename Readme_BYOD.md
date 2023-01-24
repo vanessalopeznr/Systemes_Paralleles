@@ -5,7 +5,7 @@ ENSTA Paris - édition 2022/23
 
 ### Linux/Debian 
 
-    sudo apt install  build-essential make g++ gdb libopenmpi-dev
+    sudo apt install build-essential make g++ gdb libopenmpi-dev python3-mpi4py
 
 ### Mac
 
@@ -27,7 +27,7 @@ Tapez *bash* dans la barre de questionnement.
 Une fois sous Linux :
 
     sudo apt update
-    sudo apt install  build-essential make g++ gdb libopenmpi-dev 
+    sudo apt install build-essential make g++ gdb libopenmpi-dev python3-mpi4py
 
 __Remarque__ : Sous Windows 11, il ,'est pas nécessaire d'installer un serveur X11. Les fenêtre X11 de linux sont redirigés en directX sur le bureau Windows automatiquement.
 
