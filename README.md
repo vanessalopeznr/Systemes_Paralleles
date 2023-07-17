@@ -6,6 +6,7 @@ Working with Visual Studio Code on Ubuntu: [Vscode in Ubuntu](https://ubuntu.com
 
 Configuration [Git in vscode](https://code.visualstudio.com/docs/sourcecontrol/github)
 
+Commands for upload the repository in vscode
 ```bash
 git add *
 git commit -m "Upload README"
