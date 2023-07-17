@@ -7,5 +7,7 @@ Working with Visual Studio Code on Ubuntu: [Vscode in Ubuntu](https://ubuntu.com
 Configuration [Git in vscode](https://code.visualstudio.com/docs/sourcecontrol/github)
 
 ```bash
-pip install ultralytics
+git add *
+git commit -m "Upload README"
+git push
 ```
