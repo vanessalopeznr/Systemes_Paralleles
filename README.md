@@ -13,9 +13,9 @@ git add *
 git commit -m "Upload README"
 git push
 ```
-### Instalar librerias
+## Install libraries
 
-Instalar las librerias de OPEN MPI (mpirun se utiliza para ejecutar programa MPI y mpicc se usa para compilar programas MPI en C (Make executable) y mpicxx compilar programas en C++)
+Install OPEN MPI librarie (mpirun is used to run MPI program and mpicc is used to compile MPI programs in C (Make executable) and mpicxx compile programs in C++)
 
 ```
 sudo apt install openmpi-bin
