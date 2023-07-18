@@ -23,3 +23,5 @@ Matrix operator*(const Matrix& A, const Matrix& B) {
   prodSubBlocks(0, 0, 0, std::max({A.nbRows, B.nbCols, A.nbCols}), A, B, C);
   return C;
 }
+
+int main() {}
