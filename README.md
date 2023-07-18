@@ -15,7 +15,7 @@ git push
 ```
 ## Install libraries
 
-Install OPEN MPI librarie (mpirun is used to run MPI program and mpicc is used to compile MPI programs in C (Make executable) and mpicxx compile programs in C++)
+Install OPEN MPI librarie (mpirun is used to run MPI program and mpicc is used to compile MPI programs in C (Make executable) and mpic++ compile programs in C++)
 
 ```
 sudo apt install openmpi-bin
