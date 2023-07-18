@@ -8,7 +8,7 @@ Configuration [Git in vscode](https://code.visualstudio.com/docs/sourcecontrol/g
 
 
 ```bash
-#Commands for upload the repository in vscode
+#Commands for upload the repository in GitHub from vscode
 git add *
 git commit -m "Upload README"
 git push
