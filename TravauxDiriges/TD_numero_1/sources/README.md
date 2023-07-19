@@ -67,7 +67,7 @@ Vulnerabilities:
 
 *Expliquer comment est compilé le code (ligne de make ou de gcc) : on aura besoin de savoir l'optim, les paramètres, etc. Par exemple :*
 
-`make TestProduct.exe && ./TestProduct.exe 1024`
+`make TestProductMatrix.exe && ./TestProductMatrix.exe 1024`
 
 
   ordre           | time    | MFlops  | MFlops(n=2048) 
@@ -86,18 +86,15 @@ k,j,i             |  |  |
 
 ### OMP sur la meilleure boucle 
 
-`make TestProduct.exe && OMP_NUM_THREADS=8 ./TestProduct.exe 1024`
+`make TestProductMatrix.exe && OMP_NUM_THREADS=8 ./TestProductMatrix.exe 1024`
 
-  OMP_NUM         | MFlops  | MFlops(n=2048) | MFlops(n=512)  | MFlops(n=4096)
-------------------|---------|----------------|----------------|---------------
-1                 |  |
-2                 |  |
-3                 |  |
-4                 |  |
-5                 |  |
-6                 |  |
-7                 |  |
-8                 |  |
+  OMP_NUM         | MFlops  | Temps |
+------------------|---------|---------|
+1                 | 503.884 | 4.26 seg 
+2                 | 427.213 | 5.026 seg
+4                 | 500.031 | 4.29 seg
+6                 | 470.95 | 4.55 seg
+
 
 
 
