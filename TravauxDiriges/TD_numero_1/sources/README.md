@@ -88,7 +88,7 @@ k,j,i             |  |  |
 
 ### OMP sur la meilleure boucle 
 
-Il faut mettre sur les bucles _#pragma omp parallel for collapse(3)_ for parallelize le 3 bucles et avec le command:
+Il faut mettre sur les bucles **#pragma omp parallel for collapse(3)** for parallelize le 3 bucles et avec le command:
 
 `make TestProductMatrix.exe && OMP_NUM_THREADS=8 ./TestProductMatrix.exe 1024`
 
@@ -101,7 +101,7 @@ Si le command ne dit pas le nombre de threads, l'ordinateur prend tous les coeur
 4                 | 1921.46 | 1.12 seg
 6                 | 2354.43 | 0.912 seg
 
-ou c'est possible aussi préciser tous les instructions sur le ligne au code _#pragma omp parallel for num_threads(6) collapse(3)_
+ou c'est possible aussi préciser tous les instructions sur le ligne au code **#pragma omp parallel for num_threads(6) collapse(3)**
 
 ### Produit par blocs
 
