@@ -65,7 +65,9 @@ Vulnerabilities:
 
 ### Permutation des boucles
 
-*Expliquer comment est compilé le code (ligne de make ou de gcc) : on aura besoin de savoir l'optim, les paramètres, etc. Par exemple :*
+Fonctionnement make command:
+
+Lorsque le make est appellé, il cherche le fichier Makefile et lit qu'est c'est qu'il doit faire lors le command _TestProductMatrix.exe_ est appellé. Dans ce cas la, il fait: TestProductMatrix.cpp Matrix.hpp Matrix.cpp ProdMatMat.cpp avec le command CXX qui fait le reference à C++, les configurations et les libraries que sont necessaires pour ejecuter le program.
 
 `make TestProductMatrix.exe && ./TestProductMatrix.exe 1024`
 
@@ -86,18 +88,20 @@ k,j,i             |  |  |
 
 ### OMP sur la meilleure boucle 
 
+Il faut mettre sur les bucles _#pragma omp parallel for collapse(3)_ for parallelize le 3 bucles et avec le command:
+
 `make TestProductMatrix.exe && OMP_NUM_THREADS=8 ./TestProductMatrix.exe 1024`
+
+Si le command ne dit pas le nombre de threads, l'ordinateur prend tous les coeurs disponibles. (in my c ase 6)
 
   OMP_NUM         | MFlops  | Temps |
 ------------------|---------|---------|
-1                 | 503.884 | 4.26 seg 
-2                 | 427.213 | 5.026 seg
-4                 | 500.031 | 4.29 seg
-6                 | 470.95 | 4.55 seg
+1                 | 657.009 | 3.26 seg 
+2                 | 1270.42 | 1.69 seg
+4                 | 1921.46 | 1.12 seg
+6                 | 2354.43 | 0.912 seg
 
-
-
-
+ou c'est possible aussi préciser tous les instructions sur le ligne au code _#pragma omp parallel for num_threads(6) collapse(3)_
 
 ### Produit par blocs
 
