@@ -74,16 +74,28 @@ Lorsque le make est appellé, il cherche le fichier Makefile et lit qu'est c'est
 
   ordre           | time    | MFlops  | MFlops(n=2048) 
 ------------------|---------|---------|----------------
-i,j,k (origine)   | 2.73764 | 782.476 |                
-j,i,k             |  |  |    
-i,k,j             |  |  |    
-k,i,j             |  |  |    
-j,k,i             |  |  |    
-k,j,i             |  |  |    
+i,j,k (origine)   | 3.69 | 580.709 |                 
+j,i,k             | 4.05 | 529.398 |    
+i,k,j             | 10.75 | 199.686 |    
+k,i,j             | 13.35 | 160.845 |    
+j,k,i             | 0.71 | 3005.81 |    
+k,j,i             | 0.81 | 2647.08 |    
 
 
 *Discussion des résultats*
 
+Il est clair que les meilleures performances sont obtenues lorsque la boucle en i est
+la plus interne. De plus, dans ce cas, la variation du temps de calcul en fonction de la
+dimension de la matrice devient insignifiante. Les meilleures performances étant obtenues
+avec les boucles dans l’ordre jki.
+
+On sait que la matrice est stockée par colonne, on voit qu’en mettant la boucle en i comme la plus interne, cela permet d’accéder aux coefficients de C et de A en contigü dans la mémoire, tandis que pour B, on conserve la même valeur durant toute la boucle interne. En mettant k en boucle du milieu, cela
+permet également d’accèder en contigü aux cœfficients de B.
+
+
+En revanche, lorsque la boucle en j est la plus interne, on obtient les plus mauvais
+performances puisque dans ce cas, l’accès aux cœfficients de C et de B se fait avec des
+sauts mémoires dont la distance est égale à la dimension de la matrice.
 
 
 ### OMP sur la meilleure boucle 
