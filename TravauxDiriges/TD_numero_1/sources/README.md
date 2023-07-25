@@ -67,10 +67,11 @@ Vulnerabilities:
 
 Fonctionnement make command:
 
-Lorsque le make est appellé, il cherche le fichier Makefile et lit qu'est c'est qu'il doit faire lors le command _TestProductMatrix.exe_ est appellé. Dans ce cas la, il fait: TestProductMatrix.cpp Matrix.hpp Matrix.cpp ProdMatMat.cpp avec le command CXX qui fait le reference à C++, les configurations et les libraries que sont necessaires pour ejecuter le program.
+Lorsque le make est appellé, il cherche le fichier Makefile et lit qu'est c'est qu'il doit faire lors le command _TestProductMatrix.exe_ est appellé. Dans ce cas la, il fait: TestProductMatrix.cpp Matrix.hpp Matrix.cpp ProdMatMat.cpp avec le command CXX qui fait le reference à g++ -fopenmp précise sur le Make_linux.inc que l'on a importé plus tôt, les configurations et les libraries que sont necessaires pour ejecuter le program et ensuite, il execute le fichier déjà compile avec la taille de la matrix.
 
 `make TestProductMatrix.exe && ./TestProductMatrix.exe 1024`
 
+MFlops: Opérations en virgule flottante par seconde (Operaciones de coma flotante por segundo). Plus le nombre de flops est élevé, plus le nombre d'opérations par seconde augmente.
 
   ordre           | time    | MFlops  | MFlops(n=2048) 
 ------------------|---------|---------|----------------
@@ -115,11 +116,16 @@ Si le command ne dit pas le nombre de threads, l'ordinateur prend tous les coeur
 
 ou c'est possible aussi préciser tous les instructions sur le ligne au code **#pragma omp parallel for num_threads(6) collapse(3)**
 
+Il est inutile de prendre plus de coeurs sur l'ordinateur que j'utilise pour le TP, puisque ce dernier ne contient que six cœurs physiques de calcul.
+
+
 ### Produit par blocs
+
+Il faut faire une fonction pour separer le code par blocs. Au debut, c'est necessaire inicializer la matrix C et apres faire 3 boucles pour parcourir les lignes et colonnes divisés par un constante déjà définie.
 
 `make TestProduct.exe && ./TestProduct.exe 1024`
 
-  szBlock         | MFlops  | MFlops(n=2048) | MFlops(n=512)  | MFlops(n=4096)
+  szBlock         | MFlops(n=1024) | MFlops(n=2048) | MFlops(n=512)  | MFlops(n=4096)
 ------------------|---------|----------------|----------------|---------------
 origine (=max)    |  |
 32                |  |

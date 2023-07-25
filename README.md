@@ -21,3 +21,9 @@ Install OPEN MPI librarie (mpirun is used to run MPI program and mpicc is used t
 sudo apt install openmpi-bin
 sudo apt install libopenmpi-dev
 ```
+
+Install MPI for Python
+```
+sudo apt install python3-pip
+python3 -m pip install mpi4py
+```
