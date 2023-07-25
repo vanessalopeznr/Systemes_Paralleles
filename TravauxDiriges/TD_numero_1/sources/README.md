@@ -65,6 +65,8 @@ holaaa
 
 ### Permutation des boucles
 
+No apareceee 
+
 Fonctionnement make command:
 
 Lorsque le make est appellé, il cherche le fichier Makefile et lit qu'est c'est qu'il doit faire lors le command _TestProductMatrix.exe_ est appellé. Dans ce cas la, il fait: TestProductMatrix.cpp Matrix.hpp Matrix.cpp ProdMatMat.cpp avec le command CXX qui fait le reference à g++ -fopenmp précise sur le Make_linux.inc que l'on a importé plus tôt, les configurations et les libraries que sont necessaires pour ejecuter le program et ensuite, il execute le fichier déjà compile avec la taille de la matrix.
