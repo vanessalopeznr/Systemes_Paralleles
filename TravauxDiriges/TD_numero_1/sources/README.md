@@ -61,11 +61,7 @@ Vulnerabilities:
 
 ## Produit matrice-matrice
 
-holaaa
-
 ### Permutation des boucles
-
-No apareceee 
 
 Fonctionnement make command:
 
