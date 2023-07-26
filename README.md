@@ -30,13 +30,13 @@ python3 -m pip install mpi4py
 
 ### Pour parallelize les bucles en C++:
 
- Il faut mettre sur les bucles ```#pragma omp parallel for collapse(3)``` for parallelize le 3 bucles dans ce cas et sur le command pour executer le code, il faut prèciser le nombre de coeurs.
+ Il faut mettre sur les bucles `#pragma omp parallel for collapse(3)` for parallelize le 3 bucles dans ce cas et sur le command pour executer le code, il faut prèciser le nombre de coeurs.
 
 `make TestProductMatrix.exe && OMP_NUM_THREADS=8 ./TestProductMatrix.exe 1024`
 
 Si le command ne dit pas le nombre de threads, l'ordinateur prend tous les coeurs disponibles. (in my case 6)
 
-ou c'est possible aussi préciser tous les instructions sur le ligne au code ```#pragma omp parallel for num_threads(6) collapse(3)```
+ou c'est possible aussi préciser tous les instructions sur le ligne au code `#pragma omp parallel for num_threads(6) collapse(3)`
  
 ### Pour parallelize en Python:
 
@@ -52,4 +52,7 @@ Pour executer le code, il faut utiliser la commande:
     ```
     mpirun -np <nombre de processus> python3 <nombre fichier>
     ```
-
+[PASTELITO]()
+comm.send(data,dest=<nombre rank>) and comm.recv(source=<nombre rank>) used to send and receive the data.
+Note how comm.Send and comm.Recv used to send and receive the numpy array have upper case S and R.
+comm.bcast(data, root=0) used to broadcast the data to all the processes and root is the rank of the process that is going to send the data.
