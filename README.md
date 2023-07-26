@@ -52,7 +52,7 @@ Pour executer le code, il faut utiliser la commande:
     ```
     mpirun -np <nombre de processus> python3 <nombre fichier>
     ```
-[PASTELITO]()
+[PASTELITO MPI PYTHON](https://github.com/vanessalopeznr/Systemes_Paralleles/blob/main/Programs/mpi-python.py)
 comm.send(data,dest=<nombre rank>) and comm.recv(source=<nombre rank>) used to send and receive the data.
 Note how comm.Send and comm.Recv used to send and receive the numpy array have upper case S and R.
 comm.bcast(data, root=0) used to broadcast the data to all the processes and root is the rank of the process that is going to send the data.
