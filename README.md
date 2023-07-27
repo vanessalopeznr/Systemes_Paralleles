@@ -56,8 +56,14 @@ Pour executer le code, il faut utiliser la commande:
 [PASTELITO MPI PYTHON](https://github.com/vanessalopeznr/Systemes_Paralleles/blob/main/Programs/mpi-python.py)
 
 - The lower-case variants `comm.bcast`, `comm.scatter`, `comm.gather`, `comm.allgather` and `comm.alltoall` can communicate general Python objects. The vector variants (which can communicate different amounts of data to each process) `comm.Scatterv`, `comm.Gatherv`, `comm.Allgatherv`, `comm.Alltoallv` and `comm.Alltoallw` are also supported, they can only communicate objects exposing memory buffers.
-- `comm.send(data,dest=<nombre rank>)` and `comm.recv(source=<nombre rank>)` used to send and receive the data.
-- Note how `comm.Send` and `comm.Recv` used to send and receive the numpy array have upper case S and R. **Blocking communications**.
+- `comm.Send(data,dest=<nombre rank>)` and `comm.Recv(source=<nombre rank>)` used to send and receive the data. **Blocking communications**.
 - the `comm.Isend` and `comm.Irecv` return a Request instance, uniquely identifying the started operation. **Non-blocking communications**. (Ej. If you want to receive data sometimes without blocking communication).
 - `comm.bcast(data, root=0)` used to broadcast the data to all the processes and root is the rank of the process that is going to send the data.
 - When you want to receive the data and you don't know the rank of the process that is going to send the data, you can use `comm.Irecv(source=MPI.ANY_SOURCE)`
+
+Con la lista "datos" se comporta de manera bloqueante (El proceso 0 no puede seguir hasta recibir la confirmacion de recepcion del proceso 1) ya que en la comunicacion hay un buffer y una "lista de espera" de la red, cada comando tiene un buffer (en este caso la "datos") y cuando este es muy grande para la lista de espera, esta se llena, el buffer queda con el resto de informacion y bloquea el proceso.
+Por ende, en las lineas comentadas, "data" no bloquea la comunicacion ya que su talla es muy pequeña.
+
+send --> Mpi determina bloqueante o no
+isend --> Siempre es no bloqueante
+Send --> Siempre bloqueante (Dependiendo de la talla del mensaje)
