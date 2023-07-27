@@ -1,3 +1,5 @@
+# Run: mpirun -np 2 python3 mpi-python.py 
+
 from mpi4py import MPI
 import numpy as np
 import time
@@ -59,18 +61,40 @@ def nonblock_comm():
         print('Proceso 1: Datos recibidos:', data)
 
 def block_comm():
+    jeton=0
     if rank == 0:
         print('Hola, soy el proceso 0')
-        data = {'message': 'Hello, World!', 'sender': rank}
-        req = comm.send(data, dest=1)  # Blocking send to rank 1
+        datos = np.arange(100, dtype=np.float64)
+        comm.Send(datos, dest=1, tag=13)
+        #data = np.array([1], dtype='i')
+        #comm.Send([data, MPI.INT], dest=1)
         print('Proceso 0: Enviando datos...')
         time.sleep(2)
+        jeton=jeton+100
         print('Proceso 0: Continuando después del envío...')
-
+        print('Proceso 0: Jeton= ',jeton)
     elif rank == 1:
         print('Hola, soy el proceso 1')
         print('Proceso 1: Esperando recibir datos...')
-        req = comm.recv(source=0)  # Blocking receive from rank 0
-        print('Proceso 1: Datos recibidos:', req)
+        time.sleep(20)
+        datos = np.empty(100, dtype=np.float64)
+        comm.Recv(datos, source=0, tag=13)
+        #data = np.empty(1, dtype='i')
+        #comm.Recv([data, MPI.INT], source=0)
+        print('Proceso 1: Datos recibidos:', data)
+
+    '''
+    Con la lista "datos" se comporta de manera bloqueante (El proceso 0 no puede seguir hasta 
+    recibir la confirmacion de recepcion del proceso 1) ya que en la comunicacion hay un buffer y 
+    una "lista de espera" de la red, cada comando tiene un buffer (en este caso la "datos") y 
+    cuando este es muy grande para la lista de espera, esta se llena, el buffer queda con el resto 
+    de informacion y bloquea el proceso.
+    Por ende, en las lineas comentadas, "data" no bloquea la comunicacion ya que su talla es muy 
+    pequeña.
+
+    send --> Mpi determina bloqueante o no
+    isend --> Siempre es no bloqueante
+    Send --> Siempre bloqueante (Dependiendo de la talla del mensaje)
+    '''
 
 block_comm()
