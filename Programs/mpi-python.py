@@ -76,12 +76,12 @@ def block_comm():
     elif rank == 1:
         print('Hola, soy el proceso 1')
         print('Proceso 1: Esperando recibir datos...')
-        time.sleep(20)
+        time.sleep(10)
         datos = np.empty(100, dtype=np.float64)
         comm.Recv(datos, source=0, tag=13)
         #data = np.empty(1, dtype='i')
         #comm.Recv([data, MPI.INT], source=0)
-        print('Proceso 1: Datos recibidos:', data)
+        print('Proceso 1: Datos recibidos:', datos)
 
     '''
     Con la lista "datos" se comporta de manera bloqueante (El proceso 0 no puede seguir hasta 

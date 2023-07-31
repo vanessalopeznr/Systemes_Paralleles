@@ -61,8 +61,8 @@ Pour executer le code, il faut utiliser la commande:
 - `comm.bcast(data, root=0)` used to broadcast the data to all the processes and root is the rank of the process that is going to send the data.
 - When you want to receive the data and you don't know the rank of the process that is going to send the data, you can use `comm.Irecv(source=MPI.ANY_SOURCE)`
 
-Con la lista "datos" se comporta de manera bloqueante (El proceso 0 no puede seguir hasta recibir la confirmacion de recepcion del proceso 1) ya que en la comunicacion hay un buffer y una "lista de espera" de la red, cada comando tiene un buffer (en este caso la "datos") y cuando este es muy grande para la lista de espera, esta se llena, el buffer queda con el resto de informacion y bloquea el proceso.
-Por ende, en las lineas comentadas, "data" no bloquea la comunicacion ya que su talla es muy pequeña.
+Con una lista de datos grande se comporta de manera bloqueante (El proceso 0 no puede seguir hasta recibir la confirmacion de recepcion del proceso 1) ya que en la comunicacion hay un buffer y una "lista de espera" de la red, cada comando tiene un buffer y cuando este es muy grande para la lista de espera, esta se llena, el buffer queda con el resto de informacion y bloquea el proceso.
+Por ende, un dato o lista de datos pequeño no bloquea la comunicacion ya que su talla es muy pequeña.
 
 send --> Mpi determina bloqueante o no
 isend --> Siempre es no bloqueante
