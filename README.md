@@ -68,7 +68,7 @@ send --> Mpi determina bloqueante o no
 isend --> Siempre es no bloqueante
 Send --> Siempre bloqueante (Dependiendo de la talla del mensaje)
 
-Non-blocking communications: 
+Non-blocking communications: `comm.isend` and `comm.irecv`
 
 ```
     from mpi4py import MPI
@@ -86,24 +86,25 @@ Non-blocking communications:
     
 ```
 
-Blocking: 
+Blocking: `comm.Send` and `comm.Recv`
 
 ```
     from mpi4py import MPI
+    import numpy
 
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
 
+    # passing MPI datatypes explicitly
     if rank == 0:
-        data = {'a': 7, 'b': 3.14}
-        req = comm.isend(data, dest=1, tag=11)
-        req.wait()
+        data = numpy.arange(1000, dtype='i')
+        comm.Send([data, MPI.INT], dest=1, tag=77)
     elif rank == 1:
-        req = comm.irecv(source=0, tag=11)
-        data = req.wait()
+        data = numpy.empty(1000, dtype='i')
+        comm.Recv([data, MPI.INT], source=0, tag=77)
     
 ```	
-Blocking and non-blocking :
+Blocking and non-blocking : `comm.send` and `comm.recv`
 
     from mpi4py import MPI
 
