@@ -116,3 +116,121 @@ Blocking and non-blocking : `comm.send` and `comm.recv`
         comm.send(data, dest=1, tag=11)
     elif rank == 1:
         data = comm.recv(source=0, tag=11)
+
+## Collective communication
+
+MPI_Reduce : Operar envios de todos los procesos
+
+    approx_pi_loc=4.*sum/nbSamples
+    approx_pi_glob = np.zeros(1, dtype=np.double)
+    comm.Allreduce(approx_pi_loc, approx_pi_glob, MPI.SUM) #Sumar
+
+Broadcasting a Python dictionary:
+
+    from mpi4py import MPI
+
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+
+    if rank == 0:
+        data = {'key1' : [7, 2.72, 2+3j],
+                'key2' : ( 'abc', 'xyz')}
+    else:
+        data = None
+    data = comm.bcast(data, root=0)
+
+Scattering Python objects:
+
+    from mpi4py import MPI
+
+    comm = MPI.COMM_WORLD
+    size = comm.Get_size()
+    rank = comm.Get_rank()
+
+    if rank == 0:
+        data = [(i+1)**2 for i in range(size)]
+    else:
+        data = None
+    data = comm.scatter(data, root=0)
+    assert data == (rank+1)**2
+
+Gathering Python objects:
+
+    from mpi4py import MPI
+
+    comm = MPI.COMM_WORLD
+    size = comm.Get_size()
+    rank = comm.Get_rank()
+
+    data = (rank+1)**2
+    data = comm.gather(data, root=0)
+    if rank == 0:
+        for i in range(size):
+            assert data[i] == (i+1)**2
+    else:
+        assert data is None
+
+Broadcasting a NumPy array:
+
+    from mpi4py import MPI
+    import numpy as np
+
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+
+    if rank == 0:
+        data = np.arange(100, dtype='i')
+    else:
+        data = np.empty(100, dtype='i')
+    comm.Bcast(data, root=0)
+    for i in range(100):
+        assert data[i] == i
+
+Scattering NumPy arrays:
+
+    from mpi4py import MPI
+    import numpy as np
+
+    comm = MPI.COMM_WORLD
+    size = comm.Get_size()
+    rank = comm.Get_rank()
+
+    sendbuf = None
+    if rank == 0:
+        sendbuf = np.empty([size, 100], dtype='i')
+        sendbuf.T[:,:] = range(size)
+    recvbuf = np.empty(100, dtype='i')
+    comm.Scatter(sendbuf, recvbuf, root=0)
+    assert np.allclose(recvbuf, rank)
+
+Gathering NumPy arrays:
+
+    from mpi4py import MPI
+    import numpy as np
+
+    comm = MPI.COMM_WORLD
+    size = comm.Get_size()
+    rank = comm.Get_rank()
+
+    sendbuf = np.zeros(100, dtype='i') + rank
+    recvbuf = None
+    if rank == 0:
+        recvbuf = np.empty([size, 100], dtype='i')
+    comm.Gather(sendbuf, recvbuf, root=0)
+    if rank == 0:
+        for i in range(size):
+            assert np.allclose(recvbuf[i,:], i)
+
+Parallel matrix-vector product:
+
+    from mpi4py import MPI
+    import numpy
+
+    def matvec(comm, A, x):
+        m = A.shape[0] # local rows
+        p = comm.Get_size()
+        xg = numpy.zeros(m*p, dtype='d')
+        comm.Allgather([x,  MPI.DOUBLE],
+                    [xg, MPI.DOUBLE])
+        y = numpy.dot(A, xg)
+        return y
