@@ -103,7 +103,7 @@ Blocking:
         data = req.wait()
     
 ```	
-    Blocking and non-blocking :
+Blocking and non-blocking :
 
     from mpi4py import MPI
 
