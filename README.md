@@ -119,7 +119,7 @@ Blocking and non-blocking : `comm.send` and `comm.recv`
 
 ## Collective communication
 
-MPI_Reduce : Operar envios de todos los procesos
+**MPI_Reduce :** Operar envios de todos los procesos
 
 <img width="388" alt="image" src="https://github.com/vanessalopeznr/Voiture-autonome-ELEGOO/assets/123451768/cc983abc-357c-43b2-acb9-843b44c71a6a">
 
@@ -129,16 +129,16 @@ MPI_Reduce : Operar envios de todos los procesos
 
 <img width="368" alt="image" src="https://github.com/vanessalopeznr/Voiture-autonome-ELEGOO/assets/123451768/e971ae27-c714-4300-a66e-68480376bb97">
 
-MPI_Allreduce: Operar envios de todos los procesos y enviar el resultado a todos los procesos
+**MPI_Allreduce:** Operar envios de todos los procesos y enviar el resultado a todos los procesos
 
 <img width="387" alt="image" src="https://github.com/vanessalopeznr/Voiture-autonome-ELEGOO/assets/123451768/7d4d1cad-ac21-4f6d-bc14-e275006f4873">
 
 
-MPI_Scan: Operar envios de los procesos progresivamente y envia
+**MPI_Scan:** Operar envios de los procesos progresivamente y envia
 
 <img width="380" alt="image" src="https://github.com/vanessalopeznr/Voiture-autonome-ELEGOO/assets/123451768/ba96c761-643b-43e4-83b7-ae93f3cb4db5">
 
-Broadcast: Enviar datos a todos los procesos
+**Broadcast:** Enviar datos a todos los procesos
 
 <img width="370" alt="image" src="https://github.com/vanessalopeznr/Voiture-autonome-ELEGOO/assets/123451768/10710845-3c0d-4bad-a366-f84bea57c777">
 
@@ -172,7 +172,7 @@ Broadcasting a NumPy array:
     for i in range(100):
         assert data[i] == i
 
-MPI_Scatter : Distribuir datos a todos los procesos
+**MPI_Scatter :** Distribuir datos a todos los procesos
 
 <img width="488" alt="image" src="https://github.com/vanessalopeznr/Voiture-autonome-ELEGOO/assets/123451768/3f5bf419-4339-40a5-8975-30b87bf68ac6">
 
@@ -208,7 +208,7 @@ Scattering NumPy arrays:
     comm.Scatter(sendbuf, recvbuf, root=0)
     assert np.allclose(recvbuf, rank)
 
-MPI_Gather : Recopilar datos de todos los procesos en un solo proceso
+**MPI_Gather :** Recopilar datos de todos los procesos en un solo proceso
 
 <img width="433" alt="image" src="https://github.com/vanessalopeznr/Voiture-autonome-ELEGOO/assets/123451768/6ea81d12-d0ad-4974-864f-a3dc88bb1599">
 
@@ -249,7 +249,7 @@ Gathering NumPy arrays:
         for i in range(size):
             assert np.allclose(recvbuf[i,:], i)
 
-MPI_Allgather : Recopilar datos de todos los procesos en todos los procesos
+**MPI_Allgather :** Recopilar datos de todos los procesos en todos los procesos
 
 <img width="468" alt="image" src="https://github.com/vanessalopeznr/Voiture-autonome-ELEGOO/assets/123451768/355b6593-2295-4ae4-855d-22cc9cab2f24">
 
