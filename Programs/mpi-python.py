@@ -97,4 +97,74 @@ def block_comm():
     Send --> Siempre bloqueante (Dependiendo de la talla del mensaje)
     '''
 
-block_comm()
+def Reduce():
+
+    nbSamples=80
+
+    x = np.random.random_sample((nbSamples,))
+    approx_pi_loc=np.add.reduce(x,0)
+    approx_pi_glob = np.zeros(1, dtype=np.double)
+    comm.Allreduce(approx_pi_loc, approx_pi_glob, MPI.SUM) #Sumar
+
+    print(f"Pi vaut environ {approx_pi_glob}")
+
+def scatter_data():
+
+    if rank == 0:
+        data = [(i+1)**2 for i in range(size)]
+    else:
+        data = None
+    data = comm.scatter(data, root=0)
+
+    print("i am", rank, " and my data is: ", data)
+
+def gather_data():
+
+    data = (rank+1)**2
+    data = comm.gather(data, root=0)
+
+    if rank == 0:
+        print("i am", rank, " and my data is: ", data)
+
+def Broadcast_array():
+
+    if rank == 0:
+        data = np.arange(100, dtype='i')
+    else:
+        data = np.empty(100, dtype='i')
+
+    comm.Bcast(data, root=0)
+    print("i am", rank, " and my data is: ", data)
+
+def scatter_array():
+
+    sendbuf = None
+
+    if rank == 0:
+        sendbuf = np.empty([1,size*2], dtype='i')
+        sendbuf[:,:] = range(size) # Esta linea de codigo rellena en columnas [range(size) es (0,4)]
+        print(sendbuf[:,:])
+
+
+    recvbuf = np.empty(2, dtype='i')
+    comm.Scatter(sendbuf, recvbuf, root=0)
+    print("i am", rank, " and my data is: ", recvbuf)
+
+def gather_array():
+
+    sendbuf = np.zeros(20, dtype='i') + rank #Todos los valores de send toman el numero de rank
+    recvbuf = None
+
+    if rank == 0:
+        recvbuf = np.empty([size, 20], dtype='i')
+
+    comm.Gather(sendbuf, recvbuf, root=0)
+    print("i am", rank, " and my data is: ", recvbuf) #Proceso 0 recibe matrix (filas size, columnas 20)
+
+    # Verifica si el valor recibido es igual al rank, sino da error
+    if rank == 0:
+        for i in range(size):
+            assert np.allclose(recvbuf[i,:], i)
+    
+
+gather_array()

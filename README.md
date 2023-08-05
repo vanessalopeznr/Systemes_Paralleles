@@ -125,6 +125,8 @@ MPI_Reduce : Operar envios de todos los procesos
     approx_pi_glob = np.zeros(1, dtype=np.double)
     comm.Allreduce(approx_pi_loc, approx_pi_glob, MPI.SUM) #Sumar
 
+<img width="368" alt="image" src="https://github.com/vanessalopeznr/Voiture-autonome-ELEGOO/assets/123451768/e971ae27-c714-4300-a66e-68480376bb97">
+
 Broadcasting a Python dictionary:
 
     from mpi4py import MPI
@@ -217,20 +219,14 @@ Gathering NumPy arrays:
     if rank == 0:
         recvbuf = np.empty([size, 100], dtype='i')
     comm.Gather(sendbuf, recvbuf, root=0)
+
+    #Verifica si el valor recibido es igual al rank, sino da error
+
     if rank == 0:
         for i in range(size):
             assert np.allclose(recvbuf[i,:], i)
 
-Parallel matrix-vector product:
+Creacion de elementos:
 
-    from mpi4py import MPI
-    import numpy
-
-    def matvec(comm, A, x):
-        m = A.shape[0] # local rows
-        p = comm.Get_size()
-        xg = numpy.zeros(m*p, dtype='d')
-        comm.Allgather([x,  MPI.DOUBLE],
-                    [xg, MPI.DOUBLE])
-        y = numpy.dot(A, xg)
-        return y
+    np.ones(4) #Lista de unos de 4 cifras
+    np.ones([2,3]) #Matriz de 2 filas x 3 columnas
