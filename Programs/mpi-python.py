@@ -102,7 +102,7 @@ def Reduce():
     nbSamples=80
 
     x = np.random.random_sample((nbSamples,))
-    approx_pi_loc=np.add.reduce(x,0)
+    approx_pi_loc=np.add.reduce(x,0)   #Suma los puntos de x con add y con reduce se escoge el eje 0 (por filas)
     approx_pi_glob = np.zeros(1, dtype=np.double)
     comm.Allreduce(approx_pi_loc, approx_pi_glob, MPI.SUM) #Sumar
 
@@ -152,7 +152,7 @@ def scatter_array():
 
 def gather_array():
 
-    sendbuf = np.zeros(20, dtype='i') + rank #Todos los valores de send toman el numero de rank
+    sendbuf = np.zeros(20, dtype='i') + rank+1 #Todos los valores de send toman el numero de rank
     recvbuf = None
 
     if rank == 0:
@@ -164,7 +164,30 @@ def gather_array():
     # Verifica si el valor recibido es igual al rank, sino da error
     if rank == 0:
         for i in range(size):
-            assert np.allclose(recvbuf[i,:], i)
+            assert np.allclose(recvbuf[i,:], i+1)
+
+def gather_array_var():
+
+    sendbuf = np.zeros((5,5), dtype='i') + rank #Todos los valores de send toman el numero de rank
+    recvbuf = None
+
+    salto=25./size
+    start=rank*salto
+    end=start+salto
+
+    convergence = np.empty((5,5),dtype=np.double)
+
+    for i in range(start,end):
+        for j in range(5):
+            convergence[i,j] = i+j
+    
+    sendbuf = convergence[:]
+
+    if rank == 0:
+        recvbuf = np.empty(25, dtype='i')
+
+    comm.Gather(sendbuf, recvbuf, root=0)
+    print("i am", rank, " and my data is: ", recvbuf) #Proceso 0 recibe matrix (filas size, columnas 20)
     
 
 gather_array()

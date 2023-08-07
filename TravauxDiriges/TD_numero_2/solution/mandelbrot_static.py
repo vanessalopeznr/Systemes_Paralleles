@@ -63,8 +63,10 @@ scaleY = 2.25/height
 # Calcul du nombre de lignes à calculer par processeurs :
 H_locals = np.array([height//nbp + (1 if height%nbp > i_rank else 0) for i_rank in range(nbp)], dtype=np.int32)
 convergence = np.empty((H_locals[rank], width),dtype=np.double)
+print("I am rank ", rank, " and I have ", convergence.shape)
 # Calcul du début des lignes à calcul par noeud de calcul :
 first_rows = np.zeros(nbp, dtype=np.int32)
+print("I am rank ", rank, " and I have ", first_rows.shape)
 for i_rank in range(1,nbp):
     first_rows[i_rank] = first_rows[i_rank-1] + H_locals[i_rank-1]
 

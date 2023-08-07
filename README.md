@@ -127,6 +127,8 @@ Blocking and non-blocking : `comm.send` and `comm.recv`
     approx_pi_glob = np.zeros(1, dtype=np.double)
     comm.Allreduce(approx_pi_loc, approx_pi_glob, MPI.SUM) #Sumar
 
+    aprox_pi_glob = comm.reduce(approx_pi_loc, MPI.SUM, root=0) #Sumar
+
 <img width="368" alt="image" src="https://github.com/vanessalopeznr/Voiture-autonome-ELEGOO/assets/123451768/e971ae27-c714-4300-a66e-68480376bb97">
 
 **MPI_Allreduce:** Operar envios de todos los procesos y enviar el resultado a todos los procesos
@@ -257,3 +259,15 @@ Creacion de elementos:
 
     np.ones(4) #Lista de unos de 4 cifras
     np.ones([2,3]) #Matriz de 2 filas x 3 columnas
+
+Forma para organizar una lista de datos dependiendo del numero de procesos:
+
+    height = 100
+    if height%size > rank:
+        salto = height//size + 1
+        start = rank*salto
+    else:
+        salto = height//size
+        start = (rank*salto)+height%size
+    
+    end=start+salto
