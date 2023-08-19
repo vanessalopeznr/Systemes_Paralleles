@@ -8,8 +8,6 @@ import matplotlib.cm
 # Run: mpirun -np 2 python3 mpi-python.py 
 
 from mpi4py import MPI
-import numpy as np
-import time
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank() #Le nombre des processus
@@ -62,7 +60,7 @@ def non_paral():
 
     scaleX = 3./width
     scaleY = 2.25/height
-    convergence = np.empty((width,height),dtype=np.double)
+    convergence = np.empty((height,width),dtype=np.double)
 
     # Calcul de l'ensemble de mandelbrot :
     deb = time.time()
@@ -92,9 +90,7 @@ def paral():
     scaleX = 3./width
     scaleY = 2.25/height
 
-    #H_locals = np.array([height//size + (1 if height%size > i_rank else 0) for i_rank in range(size)], dtype=np.int32)
-    #convergence = np.empty((H_locals[rank], width),dtype=np.double)
-
+    #Divise la matrix en dependant du nombres de coeurs
     if height%size > rank:
         salto = height//size + 1
         start = rank*salto
@@ -103,32 +99,40 @@ def paral():
         start = (rank*salto)+height%size
     
     end=start+salto
-    convergence = np.empty((width,salto),dtype=np.double)
-    print("i am", rank, "shape", convergence.shape)
+
+    convergence = np.empty((height,width),dtype=np.double)
+    convergence = convergence.copy(order='C')
+    print(convergence.shape, rank, start, end, end-start)
+
     # Calcul de l'ensemble de mandelbrot :
     deb = time.time()
     for y in range(start,end): #Van desde start hasta end-1
         for x in range(width):
             c = complex(-2. + scaleX*x, -1.125 + scaleY * y)
-            convergence[x,y] = mandelbrot_set.convergence(c,smooth=True)
+            convergence[y,x] = mandelbrot_set.convergence(c,smooth=True)
 
-    recvbuf = None
-
-    if rank == 0:
+    if rank==0:
         recvbuf = np.empty((width,height),dtype=np.double)
+    else:
+        recvbuf=None
 
-    comm.Gather(convergence, recvbuf, root=0)
-    print(recvbuf)
+    # Collect local array sizes using the high-level mpi4py gather
+    #shapee=np.empty((salto,width),dtype=np.double)
+    shapee=convergence[start:end,:]
+
+    comm.Gatherv(shapee,recvbuf, root=0)
+
+    if rank==0:
+        # Constitution de l'image résultante :
+        deb=time.time()
+        image = Image.fromarray(np.uint8(matplotlib.cm.plasma(recvbuf)*255))
+        fin = time.time()
+        print(f"Temps de constitution de l'image : {fin-deb}")
+        image.save('mandelbrot.png')
+
     fin = time.time()
 
-    print(f"Temps du calcul de l'ensemble de Mandelbrot : {fin-deb}") 
-
-    # Constitution de l'image résultante :
-    deb=time.time()
-    image = Image.fromarray(np.uint8(matplotlib.cm.plasma(recvbuf.T)*255))
-    fin = time.time()
-    print(f"Temps de constitution de l'image : {fin-deb}")
-    #image.show()
-    image.save('mandelbrot.png')
-
+    print("I am rank ", rank, f"Temps du calcul de l'ensemble de Mandelbrot : {fin-deb}") 
+   
+    
 paral()

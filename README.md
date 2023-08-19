@@ -255,12 +255,13 @@ Gathering NumPy arrays:
 
 <img width="468" alt="image" src="https://github.com/vanessalopeznr/Voiture-autonome-ELEGOO/assets/123451768/355b6593-2295-4ae4-855d-22cc9cab2f24">
 
-Creacion de elementos:
+## Creacion de elementos:
 
     np.ones(4) #Lista de unos de 4 cifras
     np.ones([2,3]) #Matriz de 2 filas x 3 columnas
+    np.empty((2,3),dtype=np.double) #Matriz vacia de 2 filas x 3 columnas
 
-Forma para organizar una lista de datos dependiendo del numero de procesos:
+## Forma para organizar una lista de datos dependiendo del numero de procesos:
 
     height = 100
     if height%size > rank:
@@ -271,3 +272,11 @@ Forma para organizar una lista de datos dependiendo del numero de procesos:
         start = (rank*salto)+height%size
     
     end=start+salto
+
+    for y in range(start,end)
+
+y como los for recorren desde start hasta end-1, no hay problema de que un nodo tenga el numero de incio del final de otro 
+
+## Para enviar el numero el tamaño de algo
+
+    sendcounts = np.array(comm.gather(shapee.shape, 0))

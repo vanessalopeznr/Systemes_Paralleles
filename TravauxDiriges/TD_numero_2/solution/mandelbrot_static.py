@@ -11,9 +11,6 @@ global_com = MPI.COMM_WORLD.Dup()
 rank       = global_com.rank
 nbp        = global_com.size
 
-filename = f"Output{rank:03d}.txt"
-out      = open(filename, mode='w')
-
 @dataclass
 class MandelbrotSet:
     max_iterations: int
@@ -66,7 +63,7 @@ convergence = np.empty((H_locals[rank], width),dtype=np.double)
 print("I am rank ", rank, " and I have ", convergence.shape)
 # Calcul du début des lignes à calcul par noeud de calcul :
 first_rows = np.zeros(nbp, dtype=np.int32)
-print("I am rank ", rank, " and I have ", first_rows.shape)
+
 for i_rank in range(1,nbp):
     first_rows[i_rank] = first_rows[i_rank-1] + H_locals[i_rank-1]
 
@@ -78,7 +75,7 @@ for y in range(H_locals[rank]):
 
 convergence_glob = np.empty((height,width), dtype=np.double)
 fin = time()
-out.write(f"Temps du calcul de l'ensemble de Mandelbrot : {fin-deb}\n")
+print("tiempo",fin-deb)
 global_com.Gatherv(convergence, convergence_glob, 0)
 
 # Constitution de l'image résultante :
@@ -89,4 +86,4 @@ if (rank==0):
     print(f"Temps de constitution de l'image : {fin-deb}")
     image.show()
 
-out.close()
+
