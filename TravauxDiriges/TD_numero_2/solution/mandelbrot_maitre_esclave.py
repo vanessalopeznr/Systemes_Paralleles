@@ -11,9 +11,6 @@ global_com = MPI.COMM_WORLD.Dup()
 rank       = global_com.rank
 nbp        = global_com.size
 
-filename = f"Output{rank:03d}.txt"
-out      = open(filename, mode='w')
-
 @dataclass
 class MandelbrotSet:
     max_iterations: int
@@ -62,15 +59,15 @@ scaleY = 2.25/height
 if rank==0: # Maitre
     deb = time()
     convergence = np.empty((height, width),dtype=np.double)
-    task : int = 0
+    task = 0
     for iProc in range(1,nbp):
-        global_com.ssend(task, iProc)
+        global_com.ssend(task, iProc) # ssend: Espera a que el receptor esté listo para recibir antes de permitir que el remitente continúe. 
         task += 1
     row = np.empty(width, dtype=np.double)
     stat = MPI.Status()
     while task < height:
-        global_com.Recv( row, status=stat)
-        req = global_com.isend(task, stat.Get_source())
+        global_com.Recv( row, status=stat) #Bloqueante
+        req = global_com.isend(task, MPI.Get_source()) #No bloqueante Get_source:Get message source
         convergence[stat.Get_tag(),:] = row[:]
         req.wait(None)
         task += 1
@@ -81,13 +78,12 @@ if rank==0: # Maitre
         convergence[stat.Get_tag(),:] = row[:]
         req.wait(None)
     fin = time()
-    out.write(f"Temps de calcul mandelbrot pour le maitre : {fin-deb} secondes\n")    
     # Constitution de l'image résultante :
     deb=time()
     image = Image.fromarray(np.uint8(matplotlib.cm.plasma(convergence)*255))
+    image.save('mandelbrot.png')
     fin = time()
     print(f"Temps de constitution de l'image : {fin-deb}")
-    image.show()
 else: # Esclave
     deb = time()
     task = 0
@@ -100,6 +96,5 @@ else: # Esclave
                 row[x] = mandelbrot_set.convergence(c,smooth=True)
             global_com.Send(row, 0, task)
     fin = time()
-    out.write(f"Temps de calcul mandelbrot pour esclave : {fin-deb} secondes\n")    
+    print("rank ", rank, f"Temps de calcul mandelbrot pour esclave : {fin-deb} secondes\n")    
 
-out.close()

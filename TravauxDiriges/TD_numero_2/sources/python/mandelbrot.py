@@ -81,6 +81,55 @@ def non_paral():
     #image.show()
     image.save('mandelbrot.png')
 
+def paral_funct(): # SOLO CON PROCESOS EL CUAL LA DISTRIBUCION ES MODULO 0 
+    
+    # On peut changer les paramètres des deux prochaines lignes
+    mandelbrot_set = MandelbrotSet(max_iterations=50,escape_radius=10)
+    width, height = 1024, 1024
+
+    scaleX = 3./width
+    scaleY = 2.25/height
+
+    #Divise la matrix en dependant du nombres de coeurs
+    if height%size > rank:
+        salto = height//size + 1
+        start = rank*salto
+    else:
+        salto = height//size
+        start = (rank*salto)+height%size
+    
+    end=start+salto
+
+    convergence = np.empty((height,width),dtype=np.double)
+    convergence = convergence.copy(order='C')
+    print((salto,width), rank, start, end, end-start)
+
+    # Calcul de l'ensemble de mandelbrot :
+    deb = time.time()
+    for y in range(start,end): #Van desde start hasta end-1
+        for x in range(width):
+            c = complex(-2. + scaleX*x, -1.125 + scaleY * y)
+            convergence[y,x] = mandelbrot_set.convergence(c,smooth=True)
+
+    if rank==0:
+        recvbuf = np.empty((width,height),dtype=np.double)
+    else:
+        recvbuf=None
+
+    comm.Gatherv(convergence[start:end,:],recvbuf, root=0)
+
+
+    if rank != 0:
+        fin = time.time()
+        print(f"Temps de constitution de l'image : {fin-deb}")
+    if rank==0:
+        # Constitution de l'image résultante :
+        deb=time.time()
+        image = Image.fromarray(np.uint8(matplotlib.cm.plasma(recvbuf)*255))
+        fin = time.time()
+        print(f"Temps de constitution de l'image : {fin-deb}")
+        image.save('mandelbrot.png')
+    
 def paral():
 
     # On peut changer les paramètres des deux prochaines lignes
@@ -102,7 +151,7 @@ def paral():
 
     convergence = np.empty((height,width),dtype=np.double)
     convergence = convergence.copy(order='C')
-    print(convergence.shape, rank, start, end, end-start)
+    print((salto,width), rank, start, end, end-start)
 
     # Calcul de l'ensemble de mandelbrot :
     deb = time.time()
@@ -117,11 +166,20 @@ def paral():
         recvbuf=None
 
     # Collect local array sizes using the high-level mpi4py gather
-    #shapee=np.empty((salto,width),dtype=np.double)
+    shapee=np.empty((salto,width),dtype=np.double)
     shapee=convergence[start:end,:]
+    sendcounts = np.array(comm.gather(shapee.shape, 0))
+    displs = np.array(comm.gather(start,0))
 
-    comm.Gatherv(shapee,recvbuf, root=0)
+    comm.Gatherv(sendbuf=shapee, recvbuf=(recvbuf, sendcounts, displs, MPI.DOUBLE), root=0)
+    
+    
+    #comm.Gatherv(convergence[start:end,:],recvbuf, root=0)
 
+
+    if rank != 0:
+        fin = time.time()
+        print(f"Temps de constitution de l'image : {fin-deb}")
     if rank==0:
         # Constitution de l'image résultante :
         deb=time.time()
@@ -129,10 +187,6 @@ def paral():
         fin = time.time()
         print(f"Temps de constitution de l'image : {fin-deb}")
         image.save('mandelbrot.png')
-
-    fin = time.time()
-
-    print("I am rank ", rank, f"Temps du calcul de l'ensemble de Mandelbrot : {fin-deb}") 
    
     
-paral()
+paral_funct()

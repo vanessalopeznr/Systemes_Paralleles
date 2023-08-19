@@ -56,19 +56,33 @@ Pour executer le code, il faut utiliser la commande:
 [PASTELITO MPI PYTHON](https://github.com/vanessalopeznr/Systemes_Paralleles/blob/main/Programs/mpi-python.py)
 
 - The lower-case variants `comm.bcast`, `comm.scatter`, `comm.gather`, `comm.allgather` and `comm.alltoall` can communicate general Python objects. The vector variants (which can communicate different amounts of data to each process) `comm.Scatterv`, `comm.Gatherv`, `comm.Allgatherv`, `comm.Alltoallv` and `comm.Alltoallw` are also supported, they can only communicate objects exposing memory buffers.
+
 - `comm.Send(data,dest=<nombre rank>)` and `comm.Recv(source=<nombre rank>)` used to send and receive the data. **Blocking communications**.
+
 - the `comm.isend` and `comm.irecv` return a Request instance, uniquely identifying the started operation. **Non-blocking communications**. (Ej. If you want to receive data sometimes without blocking communication).
+
 - `comm.bcast(data, root=0)` used to broadcast the data to all the processes and root is the rank of the process that is going to send the data.
+
 - When you want to receive the data and you don't know the rank of the process that is going to send the data, you can use `comm.Irecv(source=MPI.ANY_SOURCE)`
 
 Con una lista de datos grande se comporta de manera bloqueante (El proceso 0 no puede seguir hasta recibir la confirmacion de recepcion del proceso 1) ya que en la comunicacion hay un buffer y una "lista de espera" de la red, cada comando tiene un buffer y cuando este es muy grande para la lista de espera, esta se llena, el buffer queda con el resto de informacion y bloquea el proceso.
 Por ende, un dato o lista de datos pequeño no bloquea la comunicacion ya que su talla es muy pequeña.
 
-send --> Mpi determina bloqueante o no
-isend --> Siempre es no bloqueante
-Send --> Siempre bloqueante (Dependiendo de la talla del mensaje)
+-----------------------------------------------------------------------------------------------------
 
-Non-blocking communications: `comm.isend` and `comm.irecv`
+Send / Recv --> Blocking (Dependiendo de la talla del mensaje)
+
+i / I --> Nonblocking (send,recv, gather, gatherv)
+
+send / recv --> MPI decition (Block or not)
+
+ss / Ss --> Synchronous (nonblock / block) [Syncro: Espera a que el receptor esté listo para recibir antes de permitir que el remitente continúe. ]
+
+iss --> Nonblocking synchronous
+
+---------------------------------------------------------------------------------------------------
+
+Non-blocking communications: `comm.isend` and `comm.irecv` (Necesita wait)
 
 ```
     from mpi4py import MPI
@@ -255,6 +269,14 @@ Gathering NumPy arrays:
 
 <img width="468" alt="image" src="https://github.com/vanessalopeznr/Voiture-autonome-ELEGOO/assets/123451768/355b6593-2295-4ae4-855d-22cc9cab2f24">
 
+## Speedup
+
+Séquentiel
+------------
+Parallelice
+
+Debe dar mayor a 1 para que la paralelizacion valga la pena (Si es menor significa que el séquentiel es mas rapido)
+
 ## Creacion de elementos:
 
     np.ones(4) #Lista de unos de 4 cifras
@@ -274,6 +296,10 @@ Gathering NumPy arrays:
     end=start+salto
 
     for y in range(start,end)
+
+Si el modulo entre la division height y el npb es mayor que el rank evaluado, se agrega 1 a la reparticion equitativas. Este 1 se agrega a todos los procesos hasta repartir el modulo entre el numero total de procesos; sino simplemente el rango es la reparticion equitativa.
+
+Ej. 80 tiene modulo 2 cuando se divide por 3 procesos, entonces el va a repartir 2 unos en los dos primeros procesos.
 
 y como los for recorren desde start hasta end-1, no hay problema de que un nodo tenga el numero de incio del final de otro 
 
