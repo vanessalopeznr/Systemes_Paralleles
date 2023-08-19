@@ -189,5 +189,4 @@ def gather_array_var():
     comm.Gather(sendbuf, recvbuf, root=0)
     print("i am", rank, " and my data is: ", recvbuf) #Proceso 0 recibe matrix (filas size, columnas 20)
     
-
-gather_array()
+scatter_array()

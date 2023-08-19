@@ -42,7 +42,10 @@ ou c'est possible aussi préciser tous les instructions sur le ligne au code `#p
 
 Il faut toujours mettre:
 	
+    import numpy as np
+    import time
     from mpi4py import MPI
+    
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank() #Le nombre des processus
     size = comm.Get_size() #Nombre total des processus dans le communicateur
