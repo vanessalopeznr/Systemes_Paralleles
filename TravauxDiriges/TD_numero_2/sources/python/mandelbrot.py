@@ -81,7 +81,7 @@ def non_paral():
     #image.show()
     image.save('mandelbrot.png')
 
-def paral_funct(): # SOLO CON PROCESOS EL CUAL LA DISTRIBUCION ES MODULO 0 
+def paral_mod_0(): # SOLO CON PROCESOS EL CUAL LA DISTRIBUCION ES MODULO 0 
     
     # On peut changer les paramètres des deux prochaines lignes
     mandelbrot_set = MandelbrotSet(max_iterations=50,escape_radius=10)
@@ -128,9 +128,9 @@ def paral_funct(): # SOLO CON PROCESOS EL CUAL LA DISTRIBUCION ES MODULO 0
         image = Image.fromarray(np.uint8(matplotlib.cm.plasma(recvbuf)*255))
         fin = time.time()
         print(f"Temps de constitution de l'image : {fin-deb}")
-        image.save('mandelbrot.png')
+        image.save('mandelbrot2.png')
     
-def paral():
+def paral(): # SOLO CON TODOS LOS NUMEROS DE PROCESOS 
 
     # On peut changer les paramètres des deux prochaines lignes
     mandelbrot_set = MandelbrotSet(max_iterations=50,escape_radius=10)
@@ -150,8 +150,6 @@ def paral():
     end=start+salto
 
     convergence = np.empty((height,width),dtype=np.double)
-    convergence = convergence.copy(order='C')
-    print((salto,width), rank, start, end, end-start)
 
     # Calcul de l'ensemble de mandelbrot :
     deb = time.time()
@@ -168,18 +166,14 @@ def paral():
     # Collect local array sizes using the high-level mpi4py gather
     shapee=np.empty((salto,width),dtype=np.double)
     shapee=convergence[start:end,:]
-    sendcounts = np.array(comm.gather(shapee.shape, 0))
-    displs = np.array(comm.gather(start,0))
 
-    comm.Gatherv(sendbuf=shapee, recvbuf=(recvbuf, sendcounts, displs, MPI.DOUBLE), root=0)
-    
+    #comm.Gatherv(sendbuf=shapee, recvbuf=(recvbuf, sendcounts, displs, MPI.DOUBLE), root=0)
+    comm.Gatherv(sendbuf=shapee, recvbuf=(recvbuf, shapee.shape[0]*shapee.shape[1]), root=0)
     
     #comm.Gatherv(convergence[start:end,:],recvbuf, root=0)
 
-
-    if rank != 0:
-        fin = time.time()
-        print(f"Temps de constitution de l'image : {fin-deb}")
+    fin = time.time()
+    print("Rank ", rank,f" Temps de constitution de l'image : {fin-deb}")
     if rank==0:
         # Constitution de l'image résultante :
         deb=time.time()
@@ -188,5 +182,70 @@ def paral():
         print(f"Temps de constitution de l'image : {fin-deb}")
         image.save('mandelbrot.png')
    
-    
-paral_funct()
+def paral_maestro_esclavo():
+
+    # On peut changer les paramètres des deux prochaines lignes
+    mandelbrot_set = MandelbrotSet(max_iterations=50,escape_radius=10)
+    width, height = 1024, 1024
+
+    scaleX = 3./width
+    scaleY = 2.25/height
+
+    if rank==0: # Maitre
+        deb=time.time()
+        convergence = np.empty((height,width),dtype=np.double)
+        task=0
+
+        for i in range(1,size):
+            #Ssend al incio para garantizar la comunicacion con todos los procesos (sino las tareas no se terminan de enviar a los procesos y un proceso toma la delantera y solo trabaja el jaja)
+            comm.ssend(task,dest=i)
+            task += 1
+
+        row = np.empty(width, dtype=np.double)
+        stat = MPI.Status()
+        while task < height:
+            #Recibir es bloqueante porque debe recibir antes de enviar
+            data = comm.Recv(row, status=stat)
+            req=comm.isend(task, stat.Get_source())
+            convergence[stat.Get_tag(),:] = row[:]
+            req.wait(None)
+            task += 1
+
+        task = -1
+
+        #Para recibir la ultima tanda de tareas, porque el while anterior ya cerro
+        for i in range(1,size):
+            #Ya no necesito enviar nada
+            data = comm.Recv(row, status=stat)
+            print(task)
+            #req = comm.isend(task, stat.Get_source())
+            convergence[stat.Get_tag(),:] = row[:]
+            #req.wait(None)
+        fin = time.time()
+        print("rank ", rank, f"Temps de calcul mandelbrot pour esclave : {fin-deb} secondes\n")
+
+        deb=time.time()
+        image = Image.fromarray(np.uint8(matplotlib.cm.plasma(convergence)*255))
+        fin = time.time()
+        print(f"Temps de constitution de l'image : {fin-deb}")
+        image.save('mandelbrot.png')
+              
+    else:
+        deb=time.time()
+        task = 0
+        row = np.empty(width, dtype=np.double)
+        stat = MPI.Status()
+        while task >= 0:
+            task=comm.recv(source=0, status=stat)
+            if task >=0:
+                for x in range(width):
+                    c = complex(-2. + scaleX*x, -1.125 + scaleY * task)
+                    row[x] = mandelbrot_set.convergence(c,smooth=True)
+
+                #Debe ser un send bloqueante, ya que si envio y el rank 0 ya me esta asignando otra tarea, se enloquece
+                comm.Send(row, 0, task)
+        fin = time.time()
+        print("rank ", rank, f"Temps de calcul mandelbrot pour esclave : {fin-deb} secondes\n") 
+#non_paral()
+#paral()
+paral_maestro_esclavo()

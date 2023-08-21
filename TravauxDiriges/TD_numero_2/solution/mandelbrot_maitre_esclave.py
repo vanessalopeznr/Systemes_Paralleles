@@ -67,7 +67,7 @@ if rank==0: # Maitre
     stat = MPI.Status()
     while task < height:
         global_com.Recv( row, status=stat) #Bloqueante
-        req = global_com.isend(task, MPI.Get_source()) #No bloqueante Get_source:Get message source
+        req = global_com.isend(task, stat.Get_source()) #No bloqueante Get_source:Get message source
         convergence[stat.Get_tag(),:] = row[:]
         req.wait(None)
         task += 1

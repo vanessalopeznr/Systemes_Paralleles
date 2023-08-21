@@ -46,11 +46,13 @@ all_pivots.sort(kind="mergesort")
 
 # Puis on choisit le median de chaque pivot :
 glob_pivots = all_pivots[nbp//2::nbp]
+print(f"glob_pivots : {glob_pivots}")
 
 # On range les valeurs dans des seaux locaux :
 local_buckets = []
 ## Traitement spécial pour le proc 0 :
 local_buckets.append( np.array(values[values <= glob_pivots[0]]))
+print(rank,local_buckets)
 ## Pour les buckets 1 à nbp-1 :
 for p in range(1,nbp-1):
     local_buckets.append( np.array(values[np.logical_and(values <= glob_pivots[p],values > glob_pivots[p-1])]) )

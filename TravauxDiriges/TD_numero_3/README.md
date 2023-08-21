@@ -7,5 +7,16 @@ Implémenter l'algorithme "bucket sort" tel que décrit sur les deux dernières 
 - le process 0 génère un tableau de nombres arbitraires,
 - il les dispatch aux autres process,
 - tous les process participent au tri en parallèle,
-- le tableau trié est rassemblé sur le process 0.
+- Les medians sont envoyées au process 0
+- Le process 0 trie les médianes et envoie les limites de chaque bucket aux process
+
+           | Taille array | Time
+-----------+--------------+----------
+séquentiel | 90000000     | 5.4   
+1          |              |   
+2          |              |      
+3          |              |
+4          |              |     
+5          |              |
+6          |              |
 
