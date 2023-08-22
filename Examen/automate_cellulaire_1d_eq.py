@@ -2,6 +2,12 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 import sys
+from mpi4py import MPI
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank() #Le nombre des processus
+size = comm.Get_size() #Nombre total des processus dans le communicateur
+#Para borrar resultados rm resultat_*
 
 compute_time = 0.
 display_time = 0.
@@ -24,8 +30,17 @@ def save_as_png(cells):
     plt.savefig(f"resultat_{num_config:03d}.png", dpi=100, bbox_inches='tight')
     plt.close()
 
+if nombre_cas%size > rank:
+    salto = nombre_cas//size + 1
+    start = rank*salto
+else:
+    salto = nombre_cas//size
+    start = (rank*salto)+nombre_cas%size
+
+end=start+salto
+
 deb=time.time()
-for num_config in range(nombre_cas):
+for num_config in range(start,end):
     t1 = time.time()
     cells = np.zeros((nb_iterations, nb_cellules+2), dtype=np.int16) #Matriz 360*362
     cells[0, (nb_cellules+2)//2] = 1 #La mitad de la matriz cells es 1
@@ -38,12 +53,12 @@ for num_config in range(nombre_cas):
     compute_time += t2 - t1
 
     t1 = time.time()
-    print(cells.shape, cells.dtype, cells.nbytes, cells)
+    
     save_as_md(cells)
 #    save_as_png(cells)
     t2 = time.time()
     display_time += t2 - t1
 fin = time.time()
-print("Me demore ", fin-deb, " segundos")
-print(f"Temps calcul des generations de cellules : {compute_time:.6g}")
-print(f"Temps d'affichage des resultats : {display_time:.6g}")
+
+print(f"Temps calcul des generations de cellules : {compute_time:.6g}", " rank ", rank)
+print(f"Temps d'affichage des resultats : {display_time:.6g}"," rank ", rank)

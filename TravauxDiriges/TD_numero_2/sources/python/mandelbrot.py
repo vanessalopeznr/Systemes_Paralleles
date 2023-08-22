@@ -215,12 +215,12 @@ def paral_maestro_esclavo():
 
         #Para recibir la ultima tanda de tareas, porque el while anterior ya cerro
         for i in range(1,size):
-            #Ya no necesito enviar nada
+            #Envio de -1 para cortar la comunicacion en nodos esclavos
             data = comm.Recv(row, status=stat)
             print(task)
-            #req = comm.isend(task, stat.Get_source())
+            req = comm.isend(task, stat.Get_source())
             convergence[stat.Get_tag(),:] = row[:]
-            #req.wait(None)
+            req.wait(None)
         fin = time.time()
         print("rank ", rank, f"Temps de calcul mandelbrot pour esclave : {fin-deb} secondes\n")
 

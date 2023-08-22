@@ -5,6 +5,12 @@ import time
 import matplotlib.pyplot as plt
 from numpy.random import MT19937
 from numpy.random import RandomState, SeedSequence
+from mpi4py import MPI
+from itertools import chain
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank() #Le nombre des processus
+size = comm.Get_size() #Nombre total des processus dans le communicateur
 
 
 class droite:
@@ -62,24 +68,50 @@ if len(sys.argv) > 2:
 
 enveloppe = None
 nuage     = None
+new_enveloppe = None
 
-for r in range(nbre_repet):
-    t1 = time.time()
-    nuage = np.array(np.array([[resolution_x * i * math.cos(48371.*i)/taille_nuage for i in range(taille_nuage)], [resolution_y * math.sin(50033./(i+1.)) for i in range(taille_nuage)]], dtype=np.float64).T)
-    t2 = time.time()
-    elapsed_generation += t2 - t1
+salto = taille_nuage // size
+start = rank*salto
+end=start+salto
 
-    # Calcul de l'enveloppe convexe :
-    t1 = time.time()
-    enveloppe = calcul_enveloppe(nuage)
-    print(enveloppe.shape)
-    t2 = time.time()
-    elapsed_convexhull += t2 - t1
 
+#fsor r in range(nbre_repet):
+t1 = time.time()
+nuage = np.array(np.array([[resolution_x * i * math.cos(48371.*i)/taille_nuage for i in range(taille_nuage)], [resolution_y * math.sin(50033./(i+1.)) for i in range(taille_nuage)]], dtype=np.float64).T)
+
+#Division de nuage para los dos procesos
+lista=nuage[start:end,:]
+
+t2 = time.time()
+elapsed_generation += t2 - t1
+
+
+t1 = time.time()
+
+# Calcul de l'enveloppe convexe local
+enveloppe = calcul_enveloppe(lista)
+
+#Envio de enveloppe local de cada proceso a todos los procesos
+enveloppe_local=comm.allgather(enveloppe)
+
+#Conversion de la lista de listas a una matriz (despues del allgather llegan los datos en [array(1),array(2),array(3),...])
+enveloppe_mayor = np.vstack((enveloppe_local[0], enveloppe_local[1]))
+
+#Calcul de l'enveloppe convexe global
+new_enveloppe = calcul_enveloppe(enveloppe_mayor)
+
+t2 = time.time()
+elapsed_convexhull += t2 - t1
+
+print(f"Temps pris pour la generation d'un nuage de points : {elapsed_generation}")
+print(f"Temps pris pour le calcul de l'enveloppe convexe : {elapsed_convexhull}")
+print(f"Temps total : {sum((elapsed_generation, elapsed_convexhull))}")
+
+'''
 print(f"Temps pris pour la generation d'un nuage de points : {elapsed_generation/nbre_repet}")
 print(f"Temps pris pour le calcul de l'enveloppe convexe : {elapsed_convexhull/nbre_repet}")
 print(f"Temps total : {sum((elapsed_generation, elapsed_convexhull))/nbre_repet}")
-
+'''
 
 
 # affichage du nuage :

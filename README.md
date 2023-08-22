@@ -272,11 +272,32 @@ Gathering NumPy arrays:
 
 <img width="468" alt="image" src="https://github.com/vanessalopeznr/Voiture-autonome-ELEGOO/assets/123451768/355b6593-2295-4ae4-855d-22cc9cab2f24">
 
+Utilizacion en bucket sort TD3 y en el punto 2 del examen tambien
+
+    from mpi4py import MPI
+
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+
+    data = []
+
+    if rank == 0:
+        data = [[2, 1], [3, 4, 5]]
+    elif rank == 1:
+        data = [[1, 2, 3, 4, 5], [6, 7, 8]]
+    elif rank == 2:
+        data = [[1, 2, 3, 4, 5], [9, 10]]
+
+    all_data = comm.allgather(data)
+
+    print(all_data)
+
 ## Speedup
 
-Séquentiel
-------------
-Parallelice
+    Séquentiel
+    ------------
+    Parallelice
 
 Debe dar mayor a 1 para que la paralelizacion valga la pena (Si es menor significa que el séquentiel es mas rapido)
 
