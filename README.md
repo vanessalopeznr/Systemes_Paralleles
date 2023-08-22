@@ -134,7 +134,8 @@ Blocking and non-blocking : `comm.send` and `comm.recv`
     elif rank == 1:
         data = comm.recv(source=0, tag=11)
 
-## Collective communication
+# Collective communication
+--------------------------------------------------------------------------------
 
 **MPI_Reduce :** Operar envios de todos los procesos
 
@@ -293,6 +294,9 @@ Utilizacion en bucket sort TD3 y en el punto 2 del examen tambien
 
     print(all_data)
 
+# Petits astuces
+----------------------------------------------------------------------------------
+
 ## Speedup
 
     Séquentiel
@@ -338,16 +342,19 @@ Generalmente, despues de usar allgather llegan los datos en [array(1),array(2),a
     enveloppe_mayor = np.vstack((enveloppe_local[0], enveloppe_local[1]))
 
 # Embarassing parallel algorithm
+---------------------------------------------------------------------------------
 
 Datos y calculos independientes de los otros procesos.
 No hay cominicacion entre procesos. 
 
 # Nearly embarassing parallel algorithm
+---------------------------------------------------------------------------------
 
 Datos y calculos independientes de los otros procesos.
 Poseen una comunicacion entre procesos muy sencilla como distribuir o unificar datos.
 
 # Maitre-Esclave algorithm
+---------------------------------------------------------------------------------
 
 Al inicio se mandan los datos iniciales con un for mediante ssend porque es necesario que le lleguen a todos los procesos esclavos (sino, el proceso maestro envia, recibe algun procesador y se casa con el). Luego, se hace un while mientras se llenan las celdas, con un Recv bloqueante para recibir la linea y un isend no bloqueante para enviar la nueva tarea para que se asegure de recibirla, antes de enviar otra. Mientras se envia, el proceso 0 ubica la linea que le llego en la matriz y cierra la comunicacion del envio de la nueva tarea (para que se vaya calculando). Finalmente, se realiza un for para recibir las ultimas lineas que faltan y se cierra la comunicacion.
 
