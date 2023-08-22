@@ -331,12 +331,18 @@ y como los for recorren desde start hasta end-1, no hay problema de que un nodo 
 
     sendcounts = np.array(comm.gather(shapee.shape, 0))
 
-## Embarassing parallel algorithm
+## Para convertir una lista de listas en matriz
+
+Generalmente, despues de usar allgather llegan los datos en [array(1),array(2),array(3),...]
+
+    enveloppe_mayor = np.vstack((enveloppe_local[0], enveloppe_local[1]))
+
+# Embarassing parallel algorithm
 
 Datos y calculos independientes de los otros procesos.
 No hay cominicacion entre procesos. 
 
-## Nearly embarassing parallel algorithm
+# Nearly embarassing parallel algorithm
 
 Datos y calculos independientes de los otros procesos.
 Poseen una comunicacion entre procesos muy sencilla como distribuir o unificar datos.
@@ -346,3 +352,4 @@ Poseen una comunicacion entre procesos muy sencilla como distribuir o unificar d
 Al inicio se mandan los datos iniciales con un for mediante ssend porque es necesario que le lleguen a todos los procesos esclavos (sino, el proceso maestro envia, recibe algun procesador y se casa con el). Luego, se hace un while mientras se llenan las celdas, con un Recv bloqueante para recibir la linea y un isend no bloqueante para enviar la nueva tarea para que se asegure de recibirla, antes de enviar otra. Mientras se envia, el proceso 0 ubica la linea que le llego en la matriz y cierra la comunicacion del envio de la nueva tarea (para que se vaya calculando). Finalmente, se realiza un for para recibir las ultimas lineas que faltan y se cierra la comunicacion.
 
 Por parte del esclavo, se realiza la tarea mientras la tarea sea mayor 0 porque cuando terminan de llenar la matriz, el proceso 0 envia una tarea -1 y es necesario un if despues para evitar hacer el proceso cuando recibe un -1 de tarea. Finalmente, se envia la linea calculada al proceso 0.
+
