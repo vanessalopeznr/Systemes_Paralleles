@@ -74,20 +74,13 @@ salto = taille_nuage // size
 start = rank*salto
 end=start+salto
 
-
 #fsor r in range(nbre_repet):
 t1 = time.time()
 nuage = np.array(np.array([[resolution_x * i * math.cos(48371.*i)/taille_nuage for i in range(taille_nuage)], [resolution_y * math.sin(50033./(i+1.)) for i in range(taille_nuage)]], dtype=np.float64).T)
 
 #Division de nuage para los dos procesos
 lista=nuage[start:end,:]
-
-t2 = time.time()
-elapsed_generation += t2 - t1
-
-
-t1 = time.time()
-
+print("lista ",lista.shape)
 # Calcul de l'enveloppe convexe local
 enveloppe = calcul_enveloppe(lista)
 
@@ -95,17 +88,18 @@ enveloppe = calcul_enveloppe(lista)
 enveloppe_local=comm.allgather(enveloppe)
 
 #Conversion de la lista de listas a una matriz (despues del allgather llegan los datos en [array(1),array(2),array(3),...])
-enveloppe_mayor = np.vstack((enveloppe_local[0], enveloppe_local[1]))
-
+enveloppe_mayor=np.vstack(enveloppe_local)
+#enveloppe_mayor=np.array(enveloppe_local[0].tolist()+enveloppe_local[1].tolist())
+print("enveloppe_mayor ",enveloppe_mayor.shape)
 #Calcul de l'enveloppe convexe global
 new_enveloppe = calcul_enveloppe(enveloppe_mayor)
 
 t2 = time.time()
 elapsed_convexhull += t2 - t1
 
-print(f"Temps pris pour la generation d'un nuage de points : {elapsed_generation}")
+#print(f"Temps pris pour la generation d'un nuage de points : {elapsed_generation}")
 print(f"Temps pris pour le calcul de l'enveloppe convexe : {elapsed_convexhull}")
-print(f"Temps total : {sum((elapsed_generation, elapsed_convexhull))}")
+#sprint(f"Temps total : {sum((elapsed_generation, elapsed_convexhull))}")
 
 '''
 print(f"Temps pris pour la generation d'un nuage de points : {elapsed_generation/nbre_repet}")
@@ -114,20 +108,20 @@ print(f"Temps total : {sum((elapsed_generation, elapsed_convexhull))/nbre_repet}
 '''
 
 
-# affichage du nuage :
-plt.scatter(nuage[:,0], nuage[:,1])
-for i in range(len(enveloppe[:])-1):
-    plt.plot([enveloppe[i,0],enveloppe[i+1,0]], [enveloppe[i,1], enveloppe[i+1,1]], 'bo', linestyle="-")
-plt.show()
+if rank == 0:
 
+    plt.scatter(nuage[:,0], nuage[:,1])
+    for i in range(len(new_enveloppe[:])-1):
+        plt.plot([new_enveloppe[i,0],new_enveloppe[i+1,0]], [new_enveloppe[i,1], new_enveloppe[i+1,1]], 'bo', linestyle="-")
+    plt.show()
 
-
-# validation de non-regression :
-if (taille_nuage == 55440):
-    ref = np.loadtxt("enveloppe_convexe_55440.ref")
-    try:
-        np.testing.assert_allclose(ref, enveloppe)
-        print("Verification pour 55440 points: OK")
-    except AssertionError as e:
-        print(e)
-        print("Verification pour 55440 points: FAILED")
+    # validation de non-regression :
+    if (taille_nuage == 55440):
+        ref = np.loadtxt("enveloppe_convexe_55440.ref")
+        try:
+            np.testing.assert_allclose(ref, new_enveloppe)
+            print("Verification pour 55440 points: OK")
+        except AssertionError as e:
+            print(e)
+            print("Verification pour 55440 points: FAILED")
+    

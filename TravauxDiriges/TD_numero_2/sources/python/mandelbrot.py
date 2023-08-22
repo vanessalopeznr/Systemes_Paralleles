@@ -181,6 +181,7 @@ def paral(): # SOLO CON TODOS LOS NUMEROS DE PROCESOS
         fin = time.time()
         print(f"Temps de constitution de l'image : {fin-deb}")
         image.save('mandelbrot.png')
+        image.show()
    
 def paral_maestro_esclavo():
 
@@ -247,5 +248,5 @@ def paral_maestro_esclavo():
         fin = time.time()
         print("rank ", rank, f"Temps de calcul mandelbrot pour esclave : {fin-deb} secondes\n") 
 #non_paral()
-#paral()
-paral_maestro_esclavo()
+paral()
+#paral_maestro_esclavo()

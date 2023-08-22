@@ -62,3 +62,4 @@ fin = time.time()
 
 print(f"Temps calcul des generations de cellules : {compute_time:.6g}", " rank ", rank)
 print(f"Temps d'affichage des resultats : {display_time:.6g}"," rank ", rank)
+print(f"Temps total : {fin-deb:.6g}"," rank ", rank)

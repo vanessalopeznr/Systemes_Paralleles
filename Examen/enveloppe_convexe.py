@@ -68,7 +68,7 @@ for r in range(nbre_repet):
     nuage = np.array(np.array([[resolution_x * i * math.cos(48371.*i)/taille_nuage for i in range(taille_nuage)], [resolution_y * math.sin(50033./(i+1.)) for i in range(taille_nuage)]], dtype=np.float64).T)
     t2 = time.time()
     elapsed_generation += t2 - t1
-
+    print(nuage.shape)
     # Calcul de l'enveloppe convexe :
     t1 = time.time()
     enveloppe = calcul_enveloppe(nuage)
