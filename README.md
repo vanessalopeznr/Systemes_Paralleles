@@ -360,3 +360,24 @@ Al inicio se mandan los datos iniciales con un for mediante ssend porque es nece
 
 Por parte del esclavo, se realiza la tarea mientras la tarea sea mayor 0 porque cuando terminan de llenar la matriz, el proceso 0 envia una tarea -1 y es necesario un if despues para evitar hacer el proceso cuando recibe un -1 de tarea. Finalmente, se envia la linea calculada al proceso 0.
 
+# Indice
+
+## TD 1
+
+Compute_pi = allreduce
+Jeton = Comunicacion simple send-recv
+Intento = Scatter
+
+## TD 2
+
+mandelbrot = Gatherv - (maestro-esclavo)
+
+## TD 3
+
+bucketsort = Allgather - gather
+intento = Scatterv (paral_maestro_0) y allgather (paral)
+
+## Examen
+
+automate_cellulaire_1d_paral = maestro-esclavo
+enveloppe convexe = allgather
